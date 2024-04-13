@@ -18,27 +18,18 @@ readonly _script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null
 readonly _this_script="${0}"
 
 readonly _arch_dir="$(uname -m)-$(uname -s)"
-readonly _install_nix="${_script_dir}/install_nix.sh"
-readonly _chroot="${_script_dir}/${_arch_dir}/proot"
-
 readonly _output_user_root="${HOME}/.cache/bazel/_bazel_${USER}"
 readonly _nix_install="${_output_user_root}/nix_install"
-readonly _nix_dir="${_nix_install}/nix"
-readonly _nix_user="${_nix_install}/user"
-
 readonly _sha256="$(sha256sum ${_this_script})"
-
 readonly _install_filename="${_nix_install}/created"
+readonly _nix_portable="${_script_dir}/${_arch_dir}/nix-portable"
 
 function install_nix {
     # Not installed, go install it.
+    echo "=== Nix repo is not installed for bazel. This will be done now."
+    echo "=== Please be patient, it will take a while. An Internet connection"
+    echo "=== is required."
     mkdir -p "${_nix_install}"
-    mkdir -p "${_nix_dir}"
-    mkdir -p "${_nix_user}"
-    "${_chroot}" -b "${_nix_dir}":/nix \
-        env \
-        XDG_STATE_HOME="${_nix_user}" \
-        "${_install_nix}"
     echo "${_sha256}" > "${_install_filename}"
 }
 
@@ -57,13 +48,11 @@ fi
 # :(
 readonly _cmdline="\
     if [[ -d /nix/store ]]; then \
-      ${BAZEL_REAL} --max_idle_secs=1 ${@}; \
+      ${BAZEL_REAL} ${@}; \
     else 
         echo /nix/store not present ; \
     fi"
 
-env XDG_STATE_HOME="${_nix_user}" \
-    "${_chroot}" -b "${_nix_dir}":/nix \
-    /bin/sh -c \
-    "${_nix_user}/nix/profiles/profile/bin/nix-shell --run \"${_cmdline}\""
+env NP_LOCATION="${_nix_install}" \
+    "${_nix_portable}" nix-shell --run "${_cmdline}"
 
