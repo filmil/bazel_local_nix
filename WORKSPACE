@@ -1,4 +1,4 @@
-workspace(name = "bazel-nix-flakes-example")
+workspace(name = "bazel_local_nix")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(

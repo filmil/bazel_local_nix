@@ -1,15 +1,13 @@
 #! /bin/bash
 set -e
 
-# This still needs debugging.
-set -x
-
 # A wrapper script for bazel or bazelisk, which sets up the build environment
 # to work with a local hermetic installation of nix.
 # Started by bazel/bazelisk instead of ${BAZEL_REAL}
 
 unshare --user --pid echo || (
-    echo "looks like this user is not allowed to make chrooted environments"
+    echo "Looks like this user is not allowed to make chrooted environments."
+    echo "unfortunately, this is where it ends."
     exit 1
 )
 
