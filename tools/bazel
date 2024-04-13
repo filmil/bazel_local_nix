@@ -17,9 +17,9 @@ readonly _script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null
 
 readonly _this_script="${0}"
 
-# TODO: filmil - This does not support multiple architectures.
+readonly _arch_dir="$(uname -m)-$(uname -s)"
 readonly _install_nix="${_script_dir}/install_nix.sh"
-readonly _chroot="${_script_dir}/nix-user-chroot"
+readonly _chroot="${_script_dir}/${_arch_dir}/nix-user-chroot"
 
 readonly _output_user_root="${HOME}/.cache/bazel/_bazel_${USER}"
 readonly _nix_install="${_output_user_root}/nix_install"
