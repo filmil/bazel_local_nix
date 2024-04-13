@@ -1,0 +1,70 @@
+#! /bin/bash
+set -e
+
+# This still needs debugging.
+set -x
+
+# A wrapper script for bazel or bazelisk, which sets up the build environment
+# to work with a local hermetic installation of nix.
+# Started by bazel/bazelisk instead of ${BAZEL_REAL}
+
+unshare --user --pid echo || (
+    echo "looks like this user is not allowed to make chrooted environments"
+    exit 1
+)
+
+# Script directory.
+# https://stackoverflow.com/questions/59895
+readonly _script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+readonly _this_script="${0}"
+
+# TODO: filmil - This does not support multiple architectures.
+readonly _install_nix="${_script_dir}/install_nix.sh"
+readonly _chroot="${_script_dir}/nix-user-chroot"
+
+readonly _output_user_root="${HOME}/.cache/bazel/_bazel_${USER}"
+readonly _nix_install="${_output_user_root}/nix_install"
+readonly _nix_dir="${_nix_install}/nix"
+readonly _nix_user="${_nix_install}/user"
+
+readonly _sha256="$(sha256sum ${_this_script})"
+
+readonly _install_filename="${_nix_install}/created"
+
+function install_nix {
+    # Not installed, go install it.
+    mkdir -p "${_nix_install}"
+    mkdir -p "${_nix_dir}"
+    mkdir -p "${_nix_user}"
+    "${_chroot}" "${_nix_dir}" \
+        env \
+        XDG_STATE_HOME="${_nix_user}" \
+        "${_install_nix}"
+    echo "${_sha256}" > "${_install_filename}"
+}
+
+
+if [[ ! -f "${_install_filename}" ]]; then
+    install_nix
+else
+    readonly _saved_sha256="$(cat ${_install_filename})"
+    if [[ "${_saved_sha256}" != "${_sha256}" ]]; then
+        install_nix
+    fi
+fi
+
+# TODO: fmil - This displaces the bazel cache, which is not expected. I would
+# prefer that it does not. XDG_CACHE_HOME is not honored by bazel until 7.2.0
+# :(
+readonly _cmdline="\
+    if [[ -d /nix/store ]]; then \
+      ${BAZEL_REAL} ${@}; \
+    else 
+        echo /nix/store not present ; \
+    fi"
+
+env XDG_STATE_HOME="${_nix_user}" \
+    "${_chroot}" "${_nix_dir}" \
+    "${_nix_user}/nix/profiles/profile/bin/nix-shell" --run "${_cmdline}"
+
