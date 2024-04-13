@@ -1,4 +1,4 @@
-# Fully hermetic bazel build with nix, without `/nix/store` [![Test status](https://github.com/filmil/bazel-nix-flakes/workflows/Test/badge.svg)](https://github.com/filmil/bazel-nix-flakes/workflows/Test/badge.svg)
+# Fully hermetic bazel build with nix, without `/nix/store` [![Test status](https://github.com/filmil/bazel_local_nix/workflows/Test/badge.svg)](https://github.com/filmil/bazel_local_nix/workflows/Test/badge.svg)
 
 An experiment in fully hermetic, but also self-installing [nix][nx] based
 hermetic bazel build.
@@ -24,26 +24,4 @@ world app.
 1. install bazelisk, name it `bazel`
 2. try: `bazel run :hello`
 
----
-
-Original README.md below.
-From https://github.com/tweag/rules_nixpkgs/tree/master/examples/flakes
-
----
-
-# bazel-nix-flakes-example
-
-The example is generating a local nixpkgs repository using the `flakes.lock` file already present on
-[flakes](https://nixos.wiki/wiki/Flakes) projects.
-
-## Requirements
-
-The nix package manager should be installed with flakes support enabled.
-
-## Running the example
-
-The local nixpkgs repository can be used by explicitly specifying the generated toolchain.
-
-``bash
-nix-shell --run "bazel run --crosstool_top=@nixpkgs_config_cc//:toolchain :hello"
-```
+See also how this is used at: https://github.com/filmil/bazel-nix-flakes
