@@ -1,0 +1,29 @@
+name: Test
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: "43 7 * * 0"
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup bazel
+        uses: abhinavsingh/setup-bazel@v3
+        with:
+          version: 5.4.0
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      - name: Build
+        run: "bazel build //..."
+      - name: Test
+        run: "bazel run :hello"
+
