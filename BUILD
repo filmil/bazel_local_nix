@@ -22,14 +22,14 @@ cat <<EOF > $@
 #    bazel run @bazel_local_nix//:install
 
 NIX_PORTABLE_BINARY="$(location @nix_portable//file)"
-BAZEL_WRAPPER="$(location //tools:bazel_wrapper)"
+BAZEL_WRAPPER="$(location //:bazel_wrapper)"
 
 EOF
     """,
     executable = True,
     tools = [
         "@nix_portable//file",
-        "//tools:bazel_wrapper"
+        "//:bazel_wrapper"
     ],
 )
 
@@ -37,3 +37,10 @@ sh_binary(
     name = "bazel_stub",
     srcs = [ "bazel_stub.sh" ],
 )
+
+sh_binary(
+    name = "bazel_wrapper",
+    srcs = [ "bazel_wrapper.sh", ], 
+    visibility = [ "//visibility:public", ],
+)
+
