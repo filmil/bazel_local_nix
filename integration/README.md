@@ -1,27 +1,38 @@
-# Fully hermetic bazel build with nix, without `/nix/store` [![Test status](https://github.com/filmil/bazel_local_nix/workflows/Test/badge.svg)](https://github.com/filmil/bazel_local_nix/workflows/Test/badge.svg)
+# Integration testing repository
 
-An experiment in fully hermetic, but also self-installing [nix][nx] based
-hermetic bazel build.
+This repo is used to demo and test the installation and use of `bazel_local_nix`.
 
-[nx]: https://nixos.org
+The approach is outlined in [the test definition](../.github/workflows/test.yml).
 
-The build rules at https://github.com/tweag/rules_nixpkgs allow bazel to bring
-in dependencies from [nixpkgs][nxp]. But, it requires having a `/nix/store` on
-your machine, which in turn means you need to have a pre-existing system-wide
-nix installation.
+## Installation approach
 
-[nxp]: https://github.com/NixOS/nixpkgs
+Add the following to your WORKSPACE file:
 
-This repository goes one step further: `bazel` will instantiate a bazel-specific
-nix store and pull in the appropriate dependencies from nixpkgs. This means that
-you will not need to install nix in order to use the packages from nixpkgs.
+```
+# This one is unique to the integration test.
+# TBD: actual.
+local_repository(
+    name = "bazel_local_nix",
+    path = "../",
+)
 
-This example repo adds the dir `//tools` to an existing `rules_nixpkgs`
-example, which makes a stand-alone and ephemeral nix installation in your bazel
-cache, and prepares all dependencies for compilation.  It then builds a hello
-world app.
+# Installation.
+load("@bazel_local_nix//:repositories.bzl", "bazel_local_nix_dependencies")
+bazel_local_nix_dependencies()
+```
 
-1. install bazelisk, name it `bazel`
-2. try: `bazel run :hello`
+Then, install the tools:
 
-See also how this is used at: https://github.com/filmil/bazel-nix-flakes
+```
+bazel --max_idle_secs=1 run @bazel_local_nix//:install
+```
+
+You can now set up the nix side of this project.
+
+Once installed, you can do:
+
+```
+bazel run --crosstool_top=@nixpkgs_config_cc//:toolchain //:hello
+```
+
+This will install, build and run the nix-scoped `hello` binary.
