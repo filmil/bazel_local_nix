@@ -1,17 +1,13 @@
 #! /bin/bash
-set -x
 
-env
+# This file goes into the //tools/bazel of the top-level repository.
 
-# This file "just" forwards to the actual binary.
+readonly _output_user_root="${HOME}/.cache/bazel/_bazel_${USER}"
+readonly _nix_install="${_output_user_root}/nix_install"
+readonly _scripts_dir="${_nix_install}/scripts_dir"
 
-# Script directory.
-# https://stackoverflow.com/questions/59895
-readonly _script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+export BAZEL_REAL
+export NIX_PORTABLE_BINARY="${_scripts_dir}/nix-portable"
 
-source "${_script_dir}/tool_addresses.sh"
-
-export BAZEL_REAL NIX_PORTABLE_BINARY INFO_WORKSPACE
-
-"${INFO_WORKSPACE}/${BAZEL_WRAPPER}" "${@}"
+"${_scripts_dir}/bazel_wrapper" "${@}"
 
