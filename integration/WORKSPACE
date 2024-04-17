@@ -49,3 +49,13 @@ rules_cc_dependencies()
 
 rules_cc_toolchains()
 
+# This one is unique to the integration test.
+
+local_repository(
+    name = "bazel_local_nix",
+    path = "../",
+)
+# Installation.
+
+load("@bazel_local_nix//:repositories.bzl", "bazel_local_nix_dependencies")
+bazel_local_nix_dependencies()
