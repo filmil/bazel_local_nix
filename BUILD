@@ -3,33 +3,14 @@ sh_binary(
     srcs = [ "install.sh", ], 
 
     args = [
-        "$(location :tool_addresses)",
         "$(location :bazel_stub)",
+        "$(location :bazel_wrapper)",
+        "$(location @nix_portable//file)",
     ],
     data = [
-        ":tool_addresses",
         ":bazel_stub",
-    ],
-)
-
-genrule(
-    name = "tool_addresses",
-    outs = [ "tool_addresses.sh" ],
-    cmd = """
-cat <<EOF > $@
-# THIS IS A GENERATED FILE.
-# You can edit, but you can also revert to the original version by running:
-#    bazel run @bazel_local_nix//:install
-
-NIX_PORTABLE_BINARY="$(location @nix_portable//file)"
-BAZEL_WRAPPER="external/bazel_local_nix/bazel_wrapper.sh"
-
-EOF
-    """,
-    executable = True,
-    tools = [
+        ":bazel_wrapper",
         "@nix_portable//file",
-        "//:bazel_wrapper"
     ],
 )
 

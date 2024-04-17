@@ -1,16 +1,15 @@
 #! /bin/bash
-set -x
 set -e
+
+# In the exceptional case where the user wants to reinstall local nix rules,
+# forward to BAZEL_REAL.
+if [[ "${@}" == "run @bazel_local_nix//:install" ]]; then
+    exec "${BAZEL_REAL}" $@
+fi
 
 # A wrapper script for bazel or bazelisk, which sets up the build environment
 # to work with a local hermetic installation of nix.
 # Started by bazel/bazelisk instead of ${BAZEL_REAL}
-
-unshare --user --pid echo || (
-    echo "Looks like this user is not allowed to make chrooted environments."
-    echo "unfortunately, this is where it ends."
-    exit 1
-)
 
 # Script directory.
 # https://stackoverflow.com/questions/59895
@@ -18,12 +17,11 @@ readonly _script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null
 
 readonly _this_script="${0}"
 
-readonly _arch_dir="$(uname -m)-$(uname -s)"
 readonly _output_user_root="${HOME}/.cache/bazel/_bazel_${USER}"
 readonly _nix_install="${_output_user_root}/nix_install"
 readonly _sha256="$(sha256sum ${_this_script})"
 readonly _install_filename="${_nix_install}/created"
-readonly _nix_portable="${INFO_WORKSPACE}/${NIX_PORTABLE_BINARY}"
+readonly _nix_portable="${NIX_PORTABLE_BINARY}"
 
 function install_nix {
     # Not installed, go install it.
@@ -44,9 +42,6 @@ else
     fi
 fi
 
-# TODO: fmil - This displaces the bazel cache, which is not expected. I would
-# prefer that it does not. XDG_CACHE_HOME is not honored by bazel until 7.2.0
-# :(
 readonly _cmdline="\
     if [[ -d /nix/store ]]; then \
       ${BAZEL_REAL} ${@}; \
@@ -54,7 +49,6 @@ readonly _cmdline="\
         echo /nix/store not present ; \
     fi"
 
-env NP_LOCATION="${_nix_install}" \
-		NP_RUNTIME=bwrap \
-	"${_nix_portable}" nix-shell --run "${_cmdline}"
+env NP_LOCATION="${_nix_install}" "${_nix_portable}" \
+    nix-shell --run "${_cmdline}"
 
