@@ -1,4 +1,5 @@
 #! /bin/bash
+set -x
 set -e
 
 # A wrapper script for bazel or bazelisk, which sets up the build environment
@@ -22,7 +23,7 @@ readonly _output_user_root="${HOME}/.cache/bazel/_bazel_${USER}"
 readonly _nix_install="${_output_user_root}/nix_install"
 readonly _sha256="$(sha256sum ${_this_script})"
 readonly _install_filename="${_nix_install}/created"
-readonly _nix_portable="${NIX_PORTABLE_BINARY}"
+readonly _nix_portable="${INFO_WORKSPACE}/${NIX_PORTABLE_BINARY}"
 
 function install_nix {
     # Not installed, go install it.
@@ -54,5 +55,6 @@ readonly _cmdline="\
     fi"
 
 env NP_LOCATION="${_nix_install}" \
-    "${_nix_portable}" nix-shell --run "${_cmdline}"
+		NP_RUNTIME=bwrap \
+	"${_nix_portable}" nix-shell --run "${_cmdline}"
 

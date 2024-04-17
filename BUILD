@@ -22,7 +22,7 @@ cat <<EOF > $@
 #    bazel run @bazel_local_nix//:install
 
 NIX_PORTABLE_BINARY="$(location @nix_portable//file)"
-BAZEL_WRAPPER="$(location //:bazel_wrapper)"
+BAZEL_WRAPPER="external/bazel_local_nix/bazel_wrapper.sh"
 
 EOF
     """,

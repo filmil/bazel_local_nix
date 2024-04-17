@@ -13,4 +13,5 @@ def bazel_local_nix_dependencies():
         url = "https://github.com/DavHau/nix-portable/releases/download/v012/nix-portable-x86_64",
         sha256 = "",
         executable = True,
+        downloaded_file_path = "nix-portable",
     )
