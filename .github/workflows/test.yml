@@ -25,5 +25,5 @@ jobs:
       - name: Build
         run: "bazel build //..."
       - name: Test
-        run: "bazel run :hello"
+        run: "cd integration && bazel run @bazel_local_nix//:install && bazel shutdown && bazel run --crosstool_top=@nixpkgs_config_cc//:toolchain //:hello"
 
