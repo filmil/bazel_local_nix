@@ -16,4 +16,4 @@ This repository goes one step further: `bazel` will instantiate a bazel-specific
 nix store and pull in the appropriate dependencies from nixpkgs. This means that
 you will not need to install nix in order to use the packages from nixpkgs.
 
-See also how this is used at: https://github.com/filmil/bazel-nix-flakes/integration
+See also how this is used at: https://github.com/filmil/bazel_local_nix/integration
