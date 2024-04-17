@@ -1,4 +1,7 @@
 #! /bin/bash
+set -x
+
+env
 
 # This file "just" forwards to the actual binary.
 
@@ -8,6 +11,7 @@ readonly _script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null
 
 source "${_script_dir}/tool_addresses.sh"
 
-export "${BAZEL_REAL}"
+export BAZEL_REAL NIX_PORTABLE_BINARY INFO_WORKSPACE
 
-"${0}" "${@}"
+"${INFO_WORKSPACE}/${BAZEL_WRAPPER}" "${@}"
+
