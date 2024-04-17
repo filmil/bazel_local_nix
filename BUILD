@@ -4,9 +4,11 @@ sh_binary(
 
     args = [
         "$(location :tool_addresses)",
+        "$(location :bazel_stub)",
     ],
     data = [
         ":tool_addresses",
+        ":bazel_stub",
     ],
 )
 
@@ -14,22 +16,24 @@ genrule(
     name = "tool_addresses",
     outs = [ "tool_addresses.sh" ],
     cmd = """
-cat <<EOF
-# Generated file.
-# You can edit, but you can revert to the original version by:
+cat <<EOF > $@
+# THIS IS A GENERATED FILE.
+# You can edit, but you can also revert to the original version by running:
 #    bazel run @bazel_local_nix//:install
-NIX_PORTABLE_BINARY="$(location :@nix_portable//file)"
-BAZEL_WRAPPER="$(location :@nix_portable//file)"
-EOF > 
+
+NIX_PORTABLE_BINARY="$(location @nix_portable//file)"
+BAZEL_WRAPPER="$(location //tools:bazel_wrapper)"
+
+EOF
     """,
     executable = True,
-    data = [
+    tools = [
         "@nix_portable//file",
         "//tools:bazel_wrapper"
     ],
 )
 
 sh_binary(
-    "bazel_stub",
+    name = "bazel_stub",
     srcs = [ "bazel_stub.sh" ],
 )

@@ -22,7 +22,7 @@ readonly _output_user_root="${HOME}/.cache/bazel/_bazel_${USER}"
 readonly _nix_install="${_output_user_root}/nix_install"
 readonly _sha256="$(sha256sum ${_this_script})"
 readonly _install_filename="${_nix_install}/created"
-readonly _nix_portable="${_script_dir}/${_arch_dir}/nix-portable"
+readonly _nix_portable="${NIX_PORTABLE_BINARY}"
 
 function install_nix {
     # Not installed, go install it.
