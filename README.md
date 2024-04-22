@@ -1,7 +1,7 @@
-# Fully hermetic bazel build with nix, without `/nix/store` [![Test status](https://github.com/filmil/bazel_local_nix/workflows/Test/badge.svg)](https://github.com/filmil/bazel_local_nix/workflows/Test/badge.svg)
+# Hermetic, ephemeral and reproducible Bazel builds [![Test status](https://github.com/filmil/bazel_local_nix/workflows/Test/badge.svg)](https://github.com/filmil/bazel_local_nix/workflows/Test/badge.svg)
 
-An experiment in fully hermetic, but also self-installing [nix][nx] based
-hermetic bazel build.
+This is an experiment in fully hermetic, but also self-installing [nix][nx]
+based hermetic bazel build.
 
 [nx]: https://nixos.org
 
@@ -16,4 +16,38 @@ This repository goes one step further: `bazel` will instantiate a bazel-specific
 nix store and pull in the appropriate dependencies from nixpkgs. This means that
 you will not need to install nix in order to use the packages from nixpkgs.
 
-See also how this is used at: [https://github.com/filmil/bazel_local_nix/integration](https://github.com/filmil/bazel_local_nix/blob/main/integration/README.md)
+## References
+
+See how this is used in the [integration test repo][itr].
+
+[itr]: https://github.com/filmil/bazel_local_nix/tree/main/integration
+
+Read [the article describing the approach][ta].
+
+[ta]: https://hdlfactory.com/post/2024/04/20/nix-bazel-%EF%B8%8F/
+
+## Installation
+
+Add the following to your WORKSPACE file:
+
+```
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+git_repository(
+    name = "bazel_local_nix",
+	remote = "https://github.com/filmil/bazel_local_nix",
+	commit = "d2daf82dfa7dc1ff7eafe12fa91c19b8fa417f15",
+)
+
+load("@bazel_local_nix//:repositories.bzl", "bazel_local_nix_dependencies")
+bazel_local_nix_dependencies()
+```
+
+Then, install the tools:
+
+```
+bazel --max_idle_secs=1 run @bazel_local_nix//:install
+```
+
+You can now set up the rest of this project.
+
