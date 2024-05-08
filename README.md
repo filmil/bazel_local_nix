@@ -12,9 +12,10 @@ nix installation.
 
 [nxp]: https://github.com/NixOS/nixpkgs
 
-This repository goes one step further: `bazel` will instantiate a bazel-specific
+This repository goes one step further: `bazel` will install an **ephemeral**
 nix store and pull in the appropriate dependencies from nixpkgs. This means that
-you will not need to install nix in order to use the packages from nixpkgs.
+you **do not** need to install nix on your system to use the packages from nixpkgs.
+`bazel` will do that for you.
 
 ## References
 
