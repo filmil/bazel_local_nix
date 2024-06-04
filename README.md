@@ -15,7 +15,8 @@ nix installation.
 This repository goes one step further: `bazel` will install an **ephemeral**
 nix store and pull in the appropriate dependencies from nixpkgs. This means that
 you **do not** need to install nix on your system to use the packages from nixpkgs.
-`bazel` will do that for you.
+`bazel` will do that for you. Moreover, the resulting nix installation will be
+**ephemeral** and will only take effect within your bazel workspace.
 
 ## References
 
