@@ -28,6 +28,9 @@ function install_nix {
     echo "=== Nix repo is not installed for bazel. This will be done now."
     echo "=== Please be patient, it will take a while. An Internet connection"
     echo "=== is required."
+    echo "==="
+    echo "=== Also, the nix files such as flake.nix MUST be merged into your git."
+    echo "=== Otherwise, bizarre errros may ensue."
     mkdir -p "${_nix_install}"
     echo "${_sha256}" > "${_install_filename}"
 }
