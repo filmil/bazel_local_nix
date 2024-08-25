@@ -25,12 +25,14 @@ readonly _nix_portable="${NIX_PORTABLE_BINARY}"
 
 function install_nix {
     # Not installed, go install it.
+    echo "==="
     echo "=== Nix repo is not installed for bazel. This will be done now."
     echo "=== Please be patient, it will take a while. An Internet connection"
     echo "=== is required."
     echo "==="
-    echo "=== Also, the nix files such as flake.nix MUST be merged into your git."
+    echo "=== Also, the nix files such as flake.nix MUST be merged into your repo."
     echo "=== Otherwise, bizarre errros may ensue."
+    echo "==="
     mkdir -p "${_nix_install}"
     echo "${_sha256}" > "${_install_filename}"
 }
@@ -38,9 +40,14 @@ function install_nix {
 
 if [[ ! -f "${_install_filename}" ]]; then
     install_nix
+    echo "=== Installed ephemeral nix. Thank you for your patience."
+    echo "=== If the build environment does not change, it will not be done again."
+    echo "==="
 else
     readonly _saved_sha256="$(cat ${_install_filename})"
     if [[ "${_saved_sha256}" != "${_sha256}" ]]; then
+        echo "=== It seems that ephemeral nix install changed"
+        echo "=== Repeating install."
         install_nix
     fi
 fi

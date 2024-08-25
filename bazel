@@ -21,12 +21,12 @@ if [[ ! -x "${_wrapper}" ]]; then
 
     readonly _config="${_tools_dir}/bazel_local_nix_config.sh"
     if [[ -x "${_tools_dir}/bazel_local_nix_config.sh" ]]; then
-        eval "${_config}"
+        eval <"${_config}"
     fi
     "${BAZEL_REAL}" --max_idle_secs=1 run @bazel_local_nix//:install
-    exit 0
+    "${BAZEL_REAL}" shutdown
     echo "=== bazel wrapper installed, please repeat your build task"
 fi
 
-"${_scripts_dir}/bazel_wrapper" "${@}"
+"${_wrapper}" "${@}"
 
