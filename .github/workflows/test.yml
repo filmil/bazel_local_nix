@@ -37,7 +37,7 @@ jobs:
           && bazel run @bazel_local_nix//:install \
           && bazel shutdown \
           && bazel run //:hello
-  test:
+  test-2:
     runs-on: ubuntu-latest
     steps:
       - name: Setup bazel
