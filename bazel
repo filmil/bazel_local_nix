@@ -17,11 +17,10 @@ readonly _wrapper="${_scripts_dir}/bazel_wrapper"
 if [[ ! -x "${_wrapper}" ]]; then
     echo "=== bazel wrapper for nix not present, installing it now"
     readonly _tools_dir="$(dirname ${0})"
-    rm "${0}" 
 
     readonly _config="${_tools_dir}/bazel_local_nix_config.sh"
     if [[ -x "${_tools_dir}/bazel_local_nix_config.sh" ]]; then
-        eval <"${_config}"
+        source "${_config}"
     fi
     "${BAZEL_REAL}" --max_idle_secs=1 run @bazel_local_nix//:install
     "${BAZEL_REAL}" shutdown
