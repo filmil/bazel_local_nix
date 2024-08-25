@@ -42,7 +42,7 @@ rules_cc_toolchains()
 # This one is unique to the integration test.
 local_repository(
     name = "bazel_local_nix",
-    path = "../",
+    path = "../../",
 )
 
 # Installation.

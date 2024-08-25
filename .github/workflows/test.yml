@@ -24,9 +24,9 @@ jobs:
           submodules: 'true'
       - name: Build
         run: "bazel build //..."
-      - name: Test
+      - name: Test Basic
         run: |
-          cd integration \
+          cd integration/basic \
           && bazel run @bazel_local_nix//:install \
           && bazel shutdown \
           && bazel run \
