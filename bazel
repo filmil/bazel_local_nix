@@ -1,10 +1,10 @@
 #! /bin/bash
 
+set -e
+
 # This file goes into the //tools/bazel of the top-level repository.
 
-# These are the installation points.
-
-# Cacahe directory for bazel is bazed on $USER.
+# Cache directory for bazel is bazed on $USER.
 readonly _output_user_root="${HOME}/.cache/bazel/_bazel_${USER}"
 readonly _nix_install="${_output_user_root}/nix_install"
 readonly _scripts_dir="${_nix_install}/scripts_dir"
@@ -23,7 +23,7 @@ if [[ ! -x "${_wrapper}" ]]; then
         if [[ -x "${_tools_dir}/bazel_local_nix_config.sh" ]]; then
             source "${_config}"
         fi
-        "${BAZEL_REAL}" --max_idle_secs=1 run @bazel_local_nix//:install
+        "${BAZEL_REAL}" --max_idle_secs=1 run @bazel_local_nix//:install -- noscript
         echo "=== bazel wrapper should now be installed, proceeding"
     )
 fi
