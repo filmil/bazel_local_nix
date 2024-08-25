@@ -4,7 +4,7 @@ set -e
 
 # This file goes into the //tools/bazel of the top-level repository.
 
-# Cache directory for bazel is bazed on $USER.
+# Cache directory for bazel is based on $USER.
 readonly _output_user_root="${HOME}/.cache/bazel/_bazel_${USER}"
 readonly _nix_install="${_output_user_root}/nix_install"
 readonly _scripts_dir="${_nix_install}/scripts_dir"

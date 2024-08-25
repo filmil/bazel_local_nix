@@ -17,6 +17,8 @@ readonly _bazel_wrapper_script="${2}"
 # The nix-portable binary
 readonly _nix_portable_binary="${3}"
 
+readonly _cmd="${4}"
+
 readonly _bazel_source_workspace="${BUILD_WORKSPACE_DIRECTORY}"
 readonly _thisdir="${PWD}"
 
@@ -30,9 +32,11 @@ mkdir -p ${_scripts_dir}
 
 mkdir -p "${_bazel_source_workspace}/tools"
 
-readonly _tools_bazel="tools/bazel"
-cp "${_bazel_stub_script}" "${_bazel_source_workspace}/tools/bazel"
-chmod a+x "${_bazel_source_workspace}/tools/bazel"
+if [[ "${_cmd}" != "noscript" ]]; then
+    readonly _tools_bazel="tools/bazel"
+    cp "${_bazel_stub_script}" "${_bazel_source_workspace}/tools/bazel"
+    chmod a+x "${_bazel_source_workspace}/tools/bazel"
+fi
 
 cp "${_bazel_wrapper_script}" "${_scripts_dir}"
 
