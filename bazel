@@ -19,12 +19,14 @@ if [[ ! -x "${_wrapper}" ]]; then
     readonly _tools_dir="$(dirname ${0})"
 
     readonly _config="${_tools_dir}/bazel_local_nix_config.sh"
-    if [[ -x "${_tools_dir}/bazel_local_nix_config.sh" ]]; then
-        source "${_config}"
-    fi
-    "${BAZEL_REAL}" --max_idle_secs=1 run @bazel_local_nix//:install
-    "${BAZEL_REAL}" shutdown
-    echo "=== bazel  wrapper should be installed, proceeding"
+    (
+        if [[ -x "${_tools_dir}/bazel_local_nix_config.sh" ]]; then
+            source "${_config}"
+        fi
+        "${BAZEL_REAL}" --max_idle_secs=1 run @bazel_local_nix//:install
+        "${BAZEL_REAL}" shutdown
+        echo "=== bazel wrapper should now be installed, proceeding"
+    )
 fi
 
 "${_wrapper}" "${@}"

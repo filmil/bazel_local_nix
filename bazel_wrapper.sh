@@ -40,9 +40,6 @@ function install_nix {
 
 if [[ ! -f "${_install_filename}" ]]; then
     install_nix
-    echo "=== Installed ephemeral nix. Thank you for your patience."
-    echo "=== If the build environment does not change, it will not be done again."
-    echo "==="
 else
     readonly _saved_sha256="$(cat ${_install_filename})"
     if [[ "${_saved_sha256}" != "${_sha256}" ]]; then
