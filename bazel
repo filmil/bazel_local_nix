@@ -24,7 +24,7 @@ if [[ ! -x "${_wrapper}" ]]; then
     fi
     "${BAZEL_REAL}" --max_idle_secs=1 run @bazel_local_nix//:install
     "${BAZEL_REAL}" shutdown
-    echo "=== bazel wrapper installed, please repeat your build task"
+    echo "=== bazel  wrapper should be installed, proceeding"
 fi
 
 "${_wrapper}" "${@}"
