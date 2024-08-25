@@ -55,4 +55,4 @@ jobs:
           cd integration/with-nix-clang \
           && bazel run @bazel_local_nix//:install \
           && bazel shutdown \
-          && bazel run //:hello
+          && bazel run --config=nix //:hello
