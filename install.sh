@@ -32,6 +32,7 @@ mkdir -p "${_bazel_source_workspace}/tools"
 
 readonly _tools_bazel="tools/bazel"
 cp "${_bazel_stub_script}" "${_bazel_source_workspace}/tools/bazel"
+chmod a+x "${_bazel_source_workspace}/tools/bazel"
 
 cp "${_bazel_wrapper_script}" "${_scripts_dir}"
 

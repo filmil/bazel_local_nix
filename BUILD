@@ -16,7 +16,7 @@ sh_binary(
 
 sh_binary(
     name = "bazel_stub",
-    srcs = [ "bazel_stub.sh" ],
+    srcs = [ "bazel" ],
 )
 
 sh_binary(
