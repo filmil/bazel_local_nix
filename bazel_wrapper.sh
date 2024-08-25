@@ -27,6 +27,8 @@ function install_nix {
     # Not installed, go install it.
     echo "==="
     echo "=== Nix repo is not installed for bazel. This will be done now."
+    echo "=== The installation should be one time only, or in some cases rare."
+    echo "==="
     echo "=== Please be patient, it will take a while. An Internet connection"
     echo "=== is required."
     echo "==="
