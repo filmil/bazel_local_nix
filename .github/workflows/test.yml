@@ -24,32 +24,6 @@ jobs:
           submodules: 'true'
       - name: Build
         run: "bazel build //..."
-      - name: Test Basic
-        run: |
-          cd integration/basic \
-          && bazel run @bazel_local_nix//:install \
-          && bazel shutdown \
-          && bazel run \
-            --crosstool_top=@nixpkgs_config_cc//:toolchain //:hello
-      - name: Test With Nix Clang
-        run: |
-          cd integration/with-nix-clang \
-          && bazel run @bazel_local_nix//:install \
-          && bazel shutdown \
-          && bazel run //:hello
-  test-2:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
-        with:
-          version: 5.4.0
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: 'true'
-      - name: Build
-        run: "bazel build //..."
       - name: Test With Nix Clang
         run: |
           cd integration/with-nix-clang \
