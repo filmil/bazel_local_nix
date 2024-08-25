@@ -70,8 +70,8 @@ rules_cc_toolchains()
 
 git_repository(
     name = "bazel_local_nix",
-	remote = "https://github.com/filmil/bazel_local_nix",
-	commit = "1658ed1563b6862abac349b407234ceee0a57ae0",
+    remote = "https://github.com/filmil/bazel_local_nix",
+    commit = "1658ed1563b6862abac349b407234ceee0a57ae0",
 )
 
 load("@bazel_local_nix//:repositories.bzl", "bazel_local_nix_dependencies")
