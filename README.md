@@ -122,10 +122,11 @@ root directory of the repo. (You could also place them elsewhere by changing the
 }
 ```
 
-`flake.nix`: creates the ephemeral environment that you want to use. Note that it is
-based on a somewhat older version of `nixos`. This will be fixed soon enough. You want
-to add to the `packages = [ ... ]` list any packages that you need in your build.
-Use the [nixos package search][nps] to figure out the names of the packages.
+`flake.nix`: creates the ephemeral environment that you want to
+use.  You want to add to the `packages = [ ... ]` list any
+packages that you need in your build. Use the [nixos package
+search][nps] to figure out the names of the packages.
+
 ```
 {
   description = "C++ environment using Nix flakes";
