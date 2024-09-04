@@ -279,3 +279,11 @@ For the time being, use the following command in the directory where the file
 nix-portable nix flake update
 ```
 
+## Troubleshooting
+
+Did you find a bug? Do you have a question?
+
+Make a minimal repro case. Then [file an issue][ff].
+
+[ff]: https://github.com/filmil/bazel_local_nix/issues
+
