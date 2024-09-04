@@ -282,6 +282,27 @@ nix-portable nix flake update
 
 ## Troubleshooting
 
+### The built binaries can not find shared libraries
+
+The shared libraries paths will be something like
+`/nix/store/...`.  This means that a binary built inside a HER
+build might not work at all outside of the bazel repo.
+
+This is not very useful. What to do?
+
+Fortunately, the nice people at tweag.io have got you covered. Please see their project `clodl` at:  https://github.com/tweag/clodl.
+
+This project allows you to build an archive with a transitive
+closure of the libraries you need. Check the licensing, though.
+
+I am also not quite sure what you would need to do to make truly
+portable packaging. I suspect some `readelf` tricks would be
+necessary, but I haven't done the legwork.  It is always hard to
+provide a self-contained binary when shared libraries are
+involved.
+
+### Other
+
 Did you find a bug? Do you have a question?
 
 Make a minimal repro case. Then [file an issue][ff].
