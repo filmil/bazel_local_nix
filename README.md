@@ -105,9 +105,9 @@ Installation is done once per repository. Once the ephemeral nix changes have be
 This means that whoever makes the changes first will need to know a tad bit more
 than any later users of the repository.
 
-**Note**: the setup is not production ready yet. While it should work, many sharp
-corners may still exist. File a bug with a repro case if you want me to take a look
-and perhaps help.  Proper documentation is also a bit wanting.
+> **Note**: the setup is not production ready yet. While it should work, many sharp
+> corners may still exist. File a bug with a repro case if you want me to take a look
+> and perhaps help.  Proper documentation is also a bit wanting.
 
 ### Add the nix files
 
