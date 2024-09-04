@@ -77,7 +77,8 @@ Taken together, it's a HER build.
 
 ## Does this work on remote builds?
 
-I have not tried. I think that it could be made to work.
+I have not tried. I think that it could be made to work. If you are curious to try
+making it work for remote builds, do let me know.
 
 ## References
 
