@@ -11,6 +11,11 @@ Sadly it only works on Linux today, since some essential parts are only work
 under Linux. So if you are on Windows or Mac, ... or Fuchsia for that matter,
 sorry.
 
+## The appeal of using nix in bazel builds
+
+Ostensibly, nix allows you to have a predictable development
+environment in which to run bazel.
+
 ## The problem with nix
 
 If you are not ready to commit to using nix everywhere, you are stuck.
