@@ -109,29 +109,12 @@ and perhaps help.  Proper documentation is also a bit wanting.
 The HER configuration depends on a small number of nix files that we place in the
 root directory of the repo. (You could also place them elsewhere by changing the obvious things such as references to `//:flake.lock` in the config files below.)
 
-`flake.lock` contains the data used to reproduce the nix installation. It must 
-be updated when you want to upgrade HER nix, which will be documented separately.
+`flake.lock` contains the data used to reproduce the nix installation.
 ```
 {
   "nodes": {
     "flake-compat": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1673956053,
-        "narHash": "sha256-4gtG9iQuiKITOjNQQeQIpoIB6b16fm+504Ch3sNKLd8=",
-        "owner": "edolstra",
-        "repo": "flake-compat",
-        "rev": "35bb57c0c8d8b62bbfd284272c928ceb64ddbde9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "edolstra",
-        "repo": "flake-compat",
-        "type": "github"
-      }
-    },
-    "flake-utils": {
-        // ...
+      // ...
     }
   },
   "root": "root",
@@ -148,7 +131,7 @@ Use the [nixos package search][nps] to figure out the names of the packages.
   description = "C++ environment using Nix flakes";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     flake-compat = {
       url = "github:edolstra/flake-compat";
       flake = false;
@@ -279,4 +262,20 @@ If this works, you are done installing.  Any subsequent users will not need
 to do anything special, except remember to use `--config=nix` in their build
 commands -- or add to their `user.bazelrc` or some such.
 
-Similarly, any continuous integration builds will need this flag. But this is usually a one-time setup, so I don't expect it to be a challenge.
+Similarly, any continuous integration builds will need this flag. But this is
+usually a one-time setup, so I don't expect it to be a challenge.
+
+## Maintenance
+
+### Updating `flake.lock`
+
+The `flake.lock` file can be updated, but this must be done outside of bazel for
+now. I suppose we could have a build rule that does that as well.
+
+For the time being, use the following command in the directory where the file
+`flake.lock` is located.
+
+```
+nix-portable nix flake update
+```
+
