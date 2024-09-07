@@ -1,6 +1,5 @@
 #! /bin/bash
-
-set -e
+set -eo pipefail
 
 # This file goes into the //tools/bazel of the top-level repository.
 
