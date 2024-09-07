@@ -17,7 +17,7 @@ jobs:
       - name: Setup bazel
         uses: abhinavsingh/setup-bazel@v3
         with:
-          version: 5.4.0
+          version: 7.2.0
       - name: Checkout
         uses: actions/checkout@v2
         with:
