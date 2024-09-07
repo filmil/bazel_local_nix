@@ -1,0 +1,3 @@
+common:nix --host_platform=@rules_nixpkgs_core//platforms:host
+common:nix --incompatible_enable_cc_toolchain_resolution
+

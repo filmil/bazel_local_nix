@@ -30,3 +30,8 @@ jobs:
           && bazel run @bazel_local_nix//:install \
           && bazel shutdown \
           && bazel run --config=nix //:hello
+      - name: Test With Partially installed nix
+        run: |
+          cd integration/partially-installed \
+          && bazel shutdown \
+          && bazel run --config=nix //:hello
