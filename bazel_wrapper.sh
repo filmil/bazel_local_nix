@@ -59,7 +59,7 @@ fi
 
 readonly _cmdline="\
     if [[ -d /nix/store ]]; then \
-      ${BAZEL_REAL} ${@}; \
+      ${BAZEL_REAL} "${@}"; \
     else 
         echo /nix/store not present ; \
     fi"
