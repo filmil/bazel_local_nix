@@ -1,0 +1,5 @@
+
+sh_binary(
+    name = "detect",
+    srcs = [ "detect.sh" ],
+)

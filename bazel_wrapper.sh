@@ -1,5 +1,6 @@
 #! /bin/bash
 set -eo pipefail
+#set -x
 
 if [[ "${BAZEL_LOCAL_NIX_DEBUG}" != "" ]]; then
     echo "=== Using bazel wrapper at //tools/bazel"
@@ -7,7 +8,7 @@ fi
 
 # In the exceptional case where the user wants to reinstall local nix rules,
 # forward to BAZEL_REAL.
-if [[ "${@}" == "--max_idle_secs=1 run --config=nix @bazel_local_nix//:install" ]]; then
+if [[ "${@}" == "--max_idle_secs=1 run @bazel_local_nix//:install" ]]; then
     echo "=== Installation forwarded to real bazel, this must be done first."
     exec "${BAZEL_REAL}" $@
 fi
