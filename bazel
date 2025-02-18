@@ -3,6 +3,30 @@ set -eo pipefail
 
 # This file goes into the //tools/bazel of the top-level repository.
 
+function find_files() {
+  local filenames=("$@")  # Accept filenames as arguments
+  local current_dir="$PWD"
+
+  while [[ "$current_dir" != "/" ]]; do
+    for filename in "${filenames[@]}"; do
+      if [[ -f "$current_dir/$filename" ]]; then
+        echo "$current_dir"  # Return the directory name
+        return 0  # Success
+      fi
+    done
+    current_dir=$(dirname "$current_dir")
+  done
+
+  return 1  # Failure (files not found)
+}
+
+# Move PWD to the repository root.
+readonly filenames=("WORKSPACE", "WORKSPACE.bazel", "MODULE", "MODULE.bazel")
+readonly _detected="$(find_files ${filenames[@]})"
+if [[ "${_detected}" != "" ]]; then
+    cd "${_detected}"
+fi
+
 # Cache directory for bazel is based on $USER.
 readonly _output_user_root="${HOME}/.cache/bazel/_bazel_${USER}"
 readonly _nix_install="${_output_user_root}/nix_install"

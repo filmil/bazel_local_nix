@@ -1,6 +1,6 @@
 sh_binary(
     name = "install",
-    srcs = [ "install.sh", ], 
+    srcs = [ "install.sh", ],
 
     args = [
         "$(location :bazel_stub)",
@@ -21,7 +21,7 @@ sh_binary(
 
 sh_binary(
     name = "bazel_wrapper",
-    srcs = [ "bazel_wrapper.sh", ], 
+    srcs = [ "bazel_wrapper.sh", ],
     visibility = [ "//visibility:public", ],
 )
 
