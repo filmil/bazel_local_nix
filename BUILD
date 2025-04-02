@@ -6,11 +6,13 @@ sh_binary(
         "$(location :bazel_stub)",
         "$(location :bazel_wrapper)",
         "$(location @nix_portable//file)",
+        "$(location :nix_cmdline)",
     ],
     data = [
         ":bazel_stub",
         ":bazel_wrapper",
         "@nix_portable//file",
+        ":nix_cmdline",
     ],
 )
 
@@ -22,6 +24,12 @@ sh_binary(
 sh_binary(
     name = "bazel_wrapper",
     srcs = [ "bazel_wrapper.sh", ],
+    visibility = [ "//visibility:public", ],
+)
+
+sh_binary(
+    name = "nix_cmdline",
+    srcs = [ "nix_cmdline.sh", ],
     visibility = [ "//visibility:public", ],
 )
 

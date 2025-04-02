@@ -17,8 +17,9 @@ readonly _bazel_wrapper_script="${2}"
 
 # The nix-portable binary
 readonly _nix_portable_binary="${3}"
+readonly _nix_cmdline_binary="${4}"
 
-readonly _cmd="${4}"
+readonly _cmd="${5}"
 
 readonly _bazel_source_workspace="${BUILD_WORKSPACE_DIRECTORY}"
 readonly _thisdir="${PWD}"
@@ -40,6 +41,7 @@ if [[ "${_cmd}" != "noscript" ]]; then
 fi
 
 cp "${_bazel_wrapper_script}" "${_scripts_dir}"
+cp "${_nix_cmdline_binary}" "${_scripts_dir}"
 
 # It is important that this binary's name remains nix-portable.
 cp "${_nix_portable_binary}" "${_scripts_dir}"
