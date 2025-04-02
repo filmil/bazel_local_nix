@@ -57,13 +57,7 @@ else
     fi
 fi
 
-readonly _cmdline="\
-    if [[ -d /nix/store ]]; then \
-      ${BAZEL_REAL} "${@}"; \
-    else 
-        echo /nix/store not present ; \
-    fi"
-
+readonly _cmdline="${_nix_install}/scripts_dir/nix_cmdline ${@}"
 env NP_LOCATION="${_nix_install}" "${_nix_portable}" \
     nix-shell --run "${_cmdline}"
 
