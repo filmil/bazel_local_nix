@@ -4,11 +4,11 @@ set -eo pipefail
 # This file goes into the //tools/bazel of the top-level repository.
 
 function find_files() {
-  local filenames=("$@")  # Accept filenames as arguments
+  local ff_filenames=("$@")  # Accept ff_filenames as arguments
   local current_dir="$PWD"
 
   while [[ "$current_dir" != "/" ]]; do
-    for filename in "${filenames[@]}"; do
+    for filename in "${ff_filenames[@]}"; do
       if [[ -f "$current_dir/$filename" ]]; then
         echo "$current_dir"  # Return the directory name
         return 0  # Success
