@@ -1,6 +1,6 @@
 #! /bin/bash
 set -eo pipefail
-set -x
+#set -x
 
 # Installs the bazel_local_nix tools into the current bazel repository.
 
