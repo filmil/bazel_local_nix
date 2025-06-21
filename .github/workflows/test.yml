@@ -27,11 +27,11 @@ jobs:
       - name: Test With Nix Clang
         run: |
           cd integration/with-nix-clang \
-          && bazel run @bazel_local_nix//:install \
-          && bazel shutdown \
-          && bazel run --config=nix //:hello
+          && bazel --max_idle_secs=20 run @bazel_local_nix//:install \
+          && bazel --max_idle_secs=20 shutdown \
+          && bazel --max_idle_secs=20 run --config=nix //:hello
       - name: Test With Partially installed nix
         run: |
           cd integration/partially-installed \
           && bazel shutdown \
-          && bazel run --config=nix //:hello
+          && bazel --max_idle_secs=20 run --config=nix //:hello
