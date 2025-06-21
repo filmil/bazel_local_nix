@@ -14,22 +14,34 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
-        with:
-          version: 7.2.0
       - name: Checkout
         uses: actions/checkout@v2
         with:
           submodules: 'true'
+
+      - name: Setup bazel
+        uses: abhinavsingh/setup-bazel@v3
+        with:
+          version: 7.2.0
+
+      - name: Cache Bazel
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/bazel
+          key: ${{ runner.os }}-bazel-${{ hashFiles('MODULE.bazel') }}
+          restore-keys: |
+            ${{ runner.os }}-bazel-
+
       - name: Build
         run: "bazel build //..."
+
       - name: Test With Nix Clang
         run: |
           cd integration/with-nix-clang \
           && bazel --max_idle_secs=20 run @bazel_local_nix//:install \
           && bazel --max_idle_secs=20 shutdown \
           && bazel --max_idle_secs=20 run --config=nix //:hello
+
       - name: Test With Partially installed nix
         run: |
           cd integration/partially-installed \
