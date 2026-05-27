@@ -4,10 +4,13 @@ module(
 )
 
 bazel_dep(name = "rules_nix", version = "0.0.1")
+bazel_dep(name = "rules_shell", version = "0.8.0")
+
 local_path_override(
     module_name = "rules_nix",
     path = "../..",
 )
 
 nix_bootstrap = use_repo_rule("@rules_nix//:nix_bootstrap.bzl", "nix_bootstrap")
+
 nix_bootstrap(name = "nix_bootstrap")

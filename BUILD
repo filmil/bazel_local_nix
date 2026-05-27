@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
+load("@bazel_lib//lib:write_source_files.bzl", "write_source_files")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@gazelle//:def.bzl", "DEFAULT_LANGUAGES", "gazelle", "gazelle_binary")
@@ -122,4 +122,12 @@ build_test(
         ":nix_rules",
         ":docs_gen",
     ],
+)
+
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+# A dummy test to ensure `bazel test //...` succeeds.
+sh_test(
+    name = "dummy_test",
+    srcs = ["dummy_test.sh"],
 )
