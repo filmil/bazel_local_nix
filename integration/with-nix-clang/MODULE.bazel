@@ -9,5 +9,18 @@ local_path_override(
     path = "../..",
 )
 
+bazel_dep(name = "rules_cc", version = "0.2.17")
+
 nix_bootstrap = use_repo_rule("@rules_nix//:nix_bootstrap.bzl", "nix_bootstrap")
 nix_bootstrap(name = "nix_bootstrap")
+
+# Configure a Nix-backed C/C++ toolchain and register it. cc_binary targets in
+# this module are then compiled by the nixpkgs gcc, run under bwrap.
+nix_cc = use_extension("@rules_nix//:extensions.bzl", "nix_cc")
+nix_cc.configure(
+    attribute = "gcc",
+    nixpkgs = "github:NixOS/nixpkgs/b134951a4c9f3c995fd7be05f3243f8ecd65d798",
+)
+use_repo(nix_cc, "nix_cc_toolchain")
+
+register_toolchains("@nix_cc_toolchain//:toolchain")

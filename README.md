@@ -66,6 +66,37 @@ genrule(
 
 See [`docs/nix_rules.md`](docs/nix_rules.md) for the generated rule reference.
 
+### Nix-backed C/C++ toolchain
+
+A module extension turns a nixpkgs compiler into a registered Bazel
+`cc_toolchain` (the rules_nix analog of `tweag/rules_nixpkgs`). In
+`MODULE.bazel`:
+
+```starlark
+bazel_dep(name = "rules_cc", version = "0.2.17")
+
+nix_cc = use_extension("@rules_nix//:extensions.bzl", "nix_cc")
+nix_cc.configure(
+    attribute = "gcc",
+    nixpkgs = "github:NixOS/nixpkgs/<rev>",
+)
+use_repo(nix_cc, "nix_cc_toolchain")
+register_toolchains("@nix_cc_toolchain//:toolchain")
+```
+
+Ordinary `cc_binary` / `cc_library` targets are then compiled by the Nix
+compiler. The compiler runs inside `bwrap` (real filesystem visible, the
+toolchain's closure overlaid at `/nix/store`), so **cc actions must use the
+local spawn strategy** — add to the consuming workspace's `.bazelrc`:
+
+```
+build --spawn_strategy=local
+```
+
+The produced binaries link against `/nix/store`, so they run on a host with no
+`/nix` only when executed under `bwrap` with the toolchain store bound at
+`/nix/store` (the `with-nix-clang` integration module shows this).
+
 ## How it works
 
 - **`nix_bootstrap`** (repository rule) downloads a pinned, checksummed Nix
@@ -93,8 +124,8 @@ cache enabled, `nix_package` downloads rather than building from source.
 ## Integration examples
 
 - `integration/partially-installed` — bundles `hello` and runs it.
-- `integration/with-nix-clang` — obtains a compiler from nixpkgs; placeholder
-  for an upcoming Nix-backed Bazel `cc_toolchain` (future work).
+- `integration/with-nix-clang` — compiles `hello.cc` with a Nix-backed Bazel
+  `cc_toolchain` configured in `MODULE.bazel`.
 
 ## Limitations
 
@@ -102,4 +133,7 @@ cache enabled, `nix_package` downloads rather than building from source.
   shared, and accessed `local`/`no-sandbox`).
 - The first build pays a one-time cost (store seeding + substitute downloads);
   later builds reuse the cache.
-- A full Bazel CC/toolchain registration is not yet implemented (future work).
+- Targets using the Nix-backed `cc_toolchain` must run cc actions with the
+  local spawn strategy (the compiler runs under `bwrap`, which cannot nest
+  inside Bazel's sandbox), and the binaries they produce reference
+  `/nix/store`.
