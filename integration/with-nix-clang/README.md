@@ -1,38 +1,22 @@
-# Integration testing repository
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 
-This repo is used to demo and test the installation and use of `bazel_local_nix`.
+# Integration: Nix-provided compiler (toolchain placeholder)
 
-The approach is outlined in [the test definition](../.github/workflows/test.yml).
+A standalone Bazel module that obtains a C/C++ compiler (`nixpkgs#gcc`) as a
+relocatable bundle via `rules_nix` and runs it through the bundle's run-shim.
 
-## Installation approach
+This directory is the home of **upcoming future work**: turning the Nix `gcc`
+into a real Bazel `cc_toolchain` configured in `MODULE.bazel` (in the spirit of
+[`tweag/rules_nixpkgs`](https://github.com/tweag/rules_nixpkgs); see rules_nix
+spec FUT-2). Once that lands, `hello.cc` will be built with a normal
+`cc_binary` resolved against the Nix-backed toolchain.
 
-Add the following to your WORKSPACE file:
+For now the example only demonstrates obtaining and invoking the compiler:
 
-```
-# This one is unique to the integration test.
-# TBD: actual.
-local_repository(
-    name = "bazel_local_nix",
-    path = "../",
-)
-
-# Installation.
-load("@bazel_local_nix//:repositories.bzl", "bazel_local_nix_dependencies")
-bazel_local_nix_dependencies()
+```sh
+bazel build //:compiler_version
+cat bazel-bin/gcc_version.txt   # -> g++ (GCC) ...
 ```
 
-Then, install the tools:
-
-```
-bazel --max_idle_secs=1 run @bazel_local_nix//:install
-```
-
-You can now set up the nix side of this project.
-
-Once installed, you can do:
-
-```
-bazel run --crosstool_top=@nixpkgs_config_cc//:toolchain //:hello
-```
-
-This will install, build and run the nix-scoped `hello` binary.
+The targets are tagged `manual` (and `requires-network` / `no-sandbox` /
+`local`) because they reach `cache.nixos.org` and run Nix under `bwrap`.

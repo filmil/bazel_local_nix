@@ -1,6 +1,13 @@
-###############################################################################
-# Bazel now uses Bzlmod by default to manage external dependencies.
-# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
-#
-# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
-###############################################################################
+module(
+    name = "with_nix_clang",
+    version = "0.0.0",
+)
+
+bazel_dep(name = "rules_nix", version = "0.0.1")
+local_path_override(
+    module_name = "rules_nix",
+    path = "../..",
+)
+
+nix_bootstrap = use_repo_rule("@rules_nix//:nix_bootstrap.bzl", "nix_bootstrap")
+nix_bootstrap(name = "nix_bootstrap")

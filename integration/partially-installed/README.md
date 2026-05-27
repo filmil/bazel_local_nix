@@ -1,38 +1,19 @@
-# Integration testing repository
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 
-This repo is used to demo and test the installation and use of `bazel_local_nix`.
+# Integration: bundle and run a Nix package
 
-The approach is outlined in [the test definition](../.github/workflows/test.yml).
+A standalone Bazel module that consumes `rules_nix` via `local_path_override`
+and exercises the core flow:
 
-## Installation approach
+- `nix_package` bundles `hello` from a pinned nixpkgs into a `.tar.gz`.
+- `nix_toolchain` extracts the bundle.
+- a `genrule` runs the bundled `hello` through its relocatable run-shim.
 
-Add the following to your WORKSPACE file:
+The targets are tagged `manual` (and `requires-network` / `no-sandbox` /
+`local`) because they reach `cache.nixos.org` and run Nix under `bwrap`. Run
+them explicitly:
 
+```sh
+bazel build //:test_hello
+cat bazel-bin/hello_out.txt   # -> Hello world!
 ```
-# This one is unique to the integration test.
-# TBD: actual.
-local_repository(
-    name = "bazel_local_nix",
-    path = "../",
-)
-
-# Installation.
-load("@bazel_local_nix//:repositories.bzl", "bazel_local_nix_dependencies")
-bazel_local_nix_dependencies()
-```
-
-Then, install the tools:
-
-```
-bazel --max_idle_secs=1 run @bazel_local_nix//:install
-```
-
-You can now set up the nix side of this project.
-
-Once installed, you can do:
-
-```
-bazel run --crosstool_top=@nixpkgs_config_cc//:toolchain //:hello
-```
-
-This will install, build and run the nix-scoped `hello` binary.

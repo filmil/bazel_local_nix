@@ -1,0 +1,76 @@
+# Tags a new release with a new version, and automatically publishes its
+# sources into the release tag.
+name: Tag and Release
+
+on:
+ schedule:
+ - cron: '0 0 10 * *'
+ workflow_dispatch:
+
+jobs:
+ tag:
+  runs-on: ubuntu-latest
+  outputs:
+   tag_name: ${{ steps.tag_version.outputs.new_tag }}
+  steps:
+  - name: Setup bazel
+    uses: bazel-contrib/setup-bazel@0.15.0
+    with:
+     bazelisk-cache: true
+     disk-cache: ${{ github.workflow }}
+     repository-cache: true
+  - name: Checkout
+    uses: actions/checkout@v4
+  - name: "Test"
+    run: "bazel test --test_output=errors //..."
+  - name: "Build integration (partially-installed)"
+    run: "cd integration/partially-installed && bazel build //..."
+  - name: "Build integration (with-nix-clang)"
+    run: "cd integration/with-nix-clang && bazel build //..."
+  - name: Bump version and push tag
+    id: tag_version
+    uses: mathieudutour/github-tag-action@v6.2
+    with:
+     github_token: ${{ secrets.GITHUB_TOKEN }}
+     release_branches: main
+  - name: Create a GitHub release
+    uses: ncipollo/release-action@v1
+    with:
+     tag: ${{ steps.tag_version.outputs.new_tag }}
+     generateReleaseNotes: true
+  - name: Get release tag
+    id: get_version
+    run: echo "VERSION=${{ steps.tag_version.outputs.new_tag }}" >> $GITHUB_ENV
+  - name: Get repo name
+    id: get_repo_name
+    run: echo "REPO_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+
+  - name: "Prepare source archive release artifact"
+    uses: thedoctor0/zip-release@0.7.5
+    with:
+     type: 'zip'
+     filename: "${{ env.REPO_NAME }}-${{ env.VERSION }}.zip"
+     exclusions: '*.git* /*node_modules/* .editorconfig /bazel-*'
+
+  - name: "Upload source archive"
+    uses: ncipollo/release-action@v1
+    env:
+     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+     tag: ${{ steps.tag_version.outputs.new_tag }}
+     allowUpdates: true
+     artifacts: "${{ env.REPO_NAME }}-${{ env.VERSION }}.zip"
+
+ publish-my-registry:
+  needs: tag
+  uses: ./.github/workflows/publish.yml
+  with:
+   tag_name: ${{ needs.tag.outputs.tag_name }}
+  secrets:
+   BCR_PUBLISH_TOKEN: ${{ secrets.BCR_PUBLISH_TOKEN }}
+
+ publish-bcr:
+  needs: tag
+  uses: ./.github/workflows/publish-bcr.yml
+  with:
+   tag_name: ${{ needs.tag.outputs.tag_name }}
