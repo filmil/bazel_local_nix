@@ -74,7 +74,7 @@ Out of scope (current revision):
 - **REQ-MOD-1** The module SHALL be named `rules_nix` and declare a SemVer
   `version` in `MODULE.bazel`.
 - **REQ-MOD-2** The module SHALL depend (via `bazel_dep`) on, at minimum:
-  `bazel_skylib`, `aspect_bazel_lib`, `rules_go`, and `gazelle`. `stardoc`
+  `bazel_skylib`, `bazel_lib`, `rules_go`, and `gazelle`. `stardoc`
   and `bazel_skylib_gazelle_plugin` MAY be declared as `dev_dependency`.
 - **REQ-MOD-3** The Go SDK and Go dependencies SHALL be derived from
   `//:go.mod` via the `rules_go`/`gazelle` module extensions.

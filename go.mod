@@ -1,3 +1,3 @@
 module github.com/filmil/rules_nix
 
-go 1.22.2
+go 1.26.2

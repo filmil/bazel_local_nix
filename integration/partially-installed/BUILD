@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 load("@rules_nix//:nix_rules.bzl", "nix_package", "nix_toolchain")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
 # Integration test: bundle 'hello' from nixpkgs and run the bundled binary
 # via the relocatable run-shim (no host /nix required).
@@ -27,4 +28,10 @@ genrule(
         "no-sandbox",
         "local",
     ],
+)
+
+# A dummy test to ensure `bazel test //...` succeeds.
+sh_test(
+    name = "dummy_test",
+    srcs = ["dummy_test.sh"],
 )
