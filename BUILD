@@ -9,6 +9,7 @@ load(":nix_rules.bzl", "nix_package", "nix_toolchain")
 exports_files([
     "nix_wrapper.sh.tpl",
     "nix_run_shim.sh",
+    "nix_cc_wrapper.sh.tpl",
 ])
 
 # Gazelle for Starlark
@@ -97,6 +98,19 @@ bzl_library(
 bzl_library(
     name = "nix_rules",
     srcs = ["nix_rules.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "nix_cc",
+    srcs = ["nix_cc.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "extensions",
+    srcs = ["extensions.bzl"],
+    deps = [":nix_cc"],
     visibility = ["//visibility:public"],
 )
 
