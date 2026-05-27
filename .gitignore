@@ -1,2 +1,5 @@
 bazel-*
 result
+result-*
+build_output.log
+user.bazelrc

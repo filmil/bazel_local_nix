@@ -1,0 +1,5 @@
+common --registry=https://raw.githubusercontent.com/filmil/bazel-registry/main
+common --registry=https://bcr.bazel.build
+build --announce_rc
+test --test_output=errors
+try-import %workspace%/user.bazelrc

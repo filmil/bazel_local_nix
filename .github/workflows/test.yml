@@ -14,36 +14,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: 'true'
-
       - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
+        uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          version: 7.2.0
-
-      - name: Cache Bazel
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/bazel
-          key: ${{ runner.os }}-bazel-${{ hashFiles('MODULE.bazel') }}
-          restore-keys: |
-            ${{ runner.os }}-bazel-
-
-      - name: Build
-        run: "bazel build //..."
-
-      - name: Test With Nix Clang
-        run: |
-          cd integration/with-nix-clang \
-          && bazel --max_idle_secs=20 run @bazel_local_nix//:install \
-          && bazel --max_idle_secs=20 shutdown \
-          && bazel --max_idle_secs=20 run --config=nix //:hello
-
-      - name: Test With Partially installed nix
-        run: |
-          cd integration/partially-installed \
-          && bazel shutdown \
-          && bazel --max_idle_secs=20 run --config=nix //:hello
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
+      - name: Checkout
+        uses: actions/checkout@v4
+      # The network/bwrap targets are tagged "manual" (they need unprivileged
+      # user namespaces, which CI runners do not guarantee), so the wildcard
+      # build/test below stays offline: it analyzes the rules, runs the docs
+      # sync check, and the offline build_test.
+      - name: Test
+        run: "bazel test //..."
+      - name: Build integration (partially-installed)
+        run: "cd integration/partially-installed && bazel build //..."
+      - name: Build integration (with-nix-clang)
+        run: "cd integration/with-nix-clang && bazel build //..."

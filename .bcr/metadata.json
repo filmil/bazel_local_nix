@@ -1,0 +1,15 @@
+{
+    "homepage": "https://github.com/filmil/bazel_local_nix",
+    "maintainers": [
+        {
+            "github": "filmil",
+            "name": "Filip Filmar"
+        }
+    ],
+    "repository": [
+        "github:filmil/bazel_local_nix"
+    ],
+    "versions": [
+        "0.0.1"
+    ]
+}
