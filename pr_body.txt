@@ -1,0 +1,13 @@
+Added a "gnat" toolchain and an example in `//integration`.
+- Updated `nix_cc.bzl` to include `gnat`, `gnatmake`, `gnatbind`, and `gnatlink` in `_TOOLS` so they are correctly wrapped.
+- Created `//integration/with-nix-gnat` example using `gnat` attribute.
+- Created `hello.adb` Ada file and updated BUILD file with a `genrule` to compile it.
+
+```
+This pull request has been created by an automated coding assistant, with human supervision.
+```
+
+Prompt:
+```
+add a new feature in a new git worktree, based in ../: add a "gnat" toolchain and example in //integration
+```

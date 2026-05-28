@@ -1,0 +1,29 @@
+module(
+    name = "with_nix_gnat",
+    version = "0.0.0",
+)
+
+bazel_dep(name = "rules_nix", version = "0.0.1")
+local_path_override(
+    module_name = "rules_nix",
+    path = "../..",
+)
+
+bazel_dep(name = "rules_cc", version = "0.2.18")
+bazel_dep(name = "rules_shell", version = "0.8.0")
+bazel_dep(name = "rules_android", version = "0.7.2")
+
+nix_bootstrap = use_repo_rule("@rules_nix//:nix_bootstrap.bzl", "nix_bootstrap")
+
+nix_bootstrap(name = "nix_bootstrap")
+
+# Configure a Nix-backed GNAT toolchain and register it.
+nix_gnat = use_extension("@rules_nix//:extensions.bzl", "nix_gnat")
+nix_gnat.configure(
+    attribute = "gnat",
+    nixpkgs = "github:NixOS/nixpkgs/b134951a4c9f3c995fd7be05f3243f8ecd65d798",
+)
+use_repo(nix_gnat, "nix_gnat_toolchain")
+
+register_toolchains("@nix_gnat_toolchain//:toolchain")
+
