@@ -29,6 +29,13 @@ unprivileged user namespaces.
 
 ## Usage
 
+To use these rules, first configure your `.bazelrc` to use the custom registry:
+
+```
+common --registry=https://raw.githubusercontent.com/filmil/bazel-registry/main
+common --registry=https://bcr.bazel.build
+```
+
 In `MODULE.bazel`:
 
 ```starlark
