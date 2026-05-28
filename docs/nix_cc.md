@@ -14,6 +14,16 @@ nix_cc_toolchain_config(<a href="#nix_cc_toolchain_config-name">name</a>, <a hre
 
 Generates a cc_toolchain_config for a Nix-backed C/C++ toolchain.
 
+Example:
+    ```starlark
+    load("@rules_nix//:nix_cc.bzl", "nix_cc_toolchain_config")
+
+    nix_cc_toolchain_config(
+        name = "nix_cc_config",
+        builtin_include_directories = ["/nix/store"],
+    )
+    ```
+
 **ATTRIBUTES**
 
 
@@ -37,6 +47,16 @@ Realizes a Nix-backed C/C++ toolchain into an external repository.
 
 Realizes the full closure of the compiler from nixpkgs, copies it into
 the external repository, and generates a cc_toolchain definition.
+
+Example:
+    ```starlark
+    load("@rules_nix//:nix_cc.bzl", "nix_cc_repo")
+
+    nix_cc_repo(
+        name = "nix_cc_toolchain",
+        installable = "github:NixOS/nixpkgs/nixos-23.11#gcc",
+    )
+    ```
 
 **ATTRIBUTES**
 

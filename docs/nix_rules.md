@@ -19,6 +19,16 @@ with absolute /nix/store paths preserved. It also includes relocatable
 bin/ shims and a bundled static bwrap that allow running the bundled
 binaries on hosts without a local /nix/store or a host-provided bwrap.
 
+Example:
+    ```starlark
+    load("@rules_nix//:nix_rules.bzl", "nix_package")
+
+    nix_package(
+        name = "hello_pkg",
+        installable = "nixpkgs#hello",
+    )
+    ```
+
 **ATTRIBUTES**
 
 
@@ -42,6 +52,21 @@ Extracts a nix_package bundle into a usable directory tree.
 
 Downstream rules can then invoke binaries from the extracted tree
 (e.g. '<extracted_dir>/bin/hello').
+
+Example:
+    ```starlark
+    load("@rules_nix//:nix_rules.bzl", "nix_package", "nix_toolchain")
+
+    nix_package(
+        name = "hello_pkg",
+        installable = "nixpkgs#hello",
+    )
+
+    nix_toolchain(
+        name = "hello_toolchain",
+        bundle = ":hello_pkg",
+    )
+    ```
 
 **ATTRIBUTES**
 
