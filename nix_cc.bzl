@@ -163,6 +163,9 @@ def _nix_cc_repo_impl(repository_ctx):
         quiet = False,
     )
     if build.return_code != 0:
+        print("nix_cc: build failed")
+        print("stdout: " + build.stdout)
+        print("stderr: " + build.stderr)
         fail("nix_cc: failed to build {}:\n{}".format(installable, build.stderr))
     lines = [l for l in build.stdout.splitlines() if l]
     if not lines:
@@ -178,6 +181,9 @@ def _nix_cc_repo_impl(repository_ctx):
         timeout = 1200,
     )
     if info.return_code != 0:
+        print("nix_cc: path-info failed")
+        print("stdout: " + info.stdout)
+        print("stderr: " + info.stderr)
         fail("nix_cc: failed to query closure:\n" + info.stderr)
     closure = [p for p in info.stdout.splitlines() if p]
 
