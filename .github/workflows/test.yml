@@ -22,13 +22,26 @@ jobs:
           repository-cache: true
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
       # The network/bwrap targets are tagged "manual" (they need unprivileged
       # user namespaces, which CI runners do not guarantee), so the wildcard
       # build/test below stays offline: it analyzes the rules, runs the docs
       # sync check, and the offline build_test.
       - name: Test
-        run: "bazel test --verbose_failures //..."
+        run: "bazel test --verbose_failures --test_output=errors //..."
       - name: Build integration (partially-installed)
-        run: "cd integration/partially-installed && bazel build --verbose_failures //..."
+        run: "cd integration/partially-installed && bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 //..."
+      - name: System Diagnostics
+        run: |
+          bwrap --version || echo "bwrap not found"
+          ls -l /usr/bin/bwrap || echo "/usr/bin/bwrap not found"
+          cat /proc/sys/kernel/unprivileged_userns_clone || echo "unprivileged_userns_clone not found"
+          sysctl kernel.unprivileged_userns_clone || true
+          id
+          mount | grep /nix || true
+          ls -R integration
       - name: Build integration (with-nix-clang)
-        run: "cd integration/with-nix-clang && bazel build --verbose_failures //..."
+        run: "cd integration/with-nix-clang && bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 --toolchain_resolution_debug=.* //..."

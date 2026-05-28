@@ -22,6 +22,7 @@ filegroup(
 """
 
 def _nix_bootstrap_impl(repository_ctx):
+    print("DEBUG: entering _nix_bootstrap_impl")
     nix_url = "https://releases.nixos.org/nix/nix-{v}/nix-{v}-x86_64-linux.tar.xz".format(
         v = NIX_VERSION,
     )
