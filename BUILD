@@ -26,16 +26,24 @@ gazelle_binary(
 )
 
 stardoc(
-    name = "docs_gen",
+    name = "nix_rules_docs_gen",
     out = "nix_rules.md",
     input = "nix_rules.bzl",
     deps = [":nix_rules"],
 )
 
+stardoc(
+    name = "nix_bootstrap_docs_gen",
+    out = "nix_bootstrap.md",
+    input = "nix_bootstrap.bzl",
+    deps = [":nix_bootstrap"],
+)
+
 write_source_files(
     name = "update_docs",
     files = {
-        "docs/nix_rules.md": ":docs_gen",
+        "docs/nix_rules.md": ":nix_rules_docs_gen",
+        "docs/nix_bootstrap.md": ":nix_bootstrap_docs_gen",
     },
 )
 
@@ -102,16 +110,36 @@ bzl_library(
 )
 
 bzl_library(
+    name = "bazel_tools_cc_action_names",
+    srcs = ["@bazel_tools//tools/build_defs/cc:action_names.bzl"],
+)
+
+bzl_library(
+    name = "bazel_tools_cpp_cc_toolchain_config_lib",
+    srcs = ["@bazel_tools//tools/cpp:cc_toolchain_config_lib.bzl"],
+)
+
+bzl_library(
+    name = "rules_cc_common_cc_common",
+    srcs = ["@rules_cc//cc/common:cc_common.bzl"],
+)
+
+bzl_library(
     name = "nix_cc",
     srcs = ["nix_cc.bzl"],
     visibility = ["//visibility:public"],
+    deps = [
+        ":bazel_tools_cc_action_names",
+        ":bazel_tools_cpp_cc_toolchain_config_lib",
+        ":rules_cc_common_cc_common",
+    ],
 )
 
 bzl_library(
     name = "extensions",
     srcs = ["extensions.bzl"],
-    deps = [":nix_cc"],
     visibility = ["//visibility:public"],
+    deps = [":nix_cc"],
 )
 
 # Offline smoke test: the rules and docs analyze without touching the network.
@@ -120,6 +148,7 @@ build_test(
     targets = [
         ":nix_bootstrap",
         ":nix_rules",
-        ":docs_gen",
+        ":nix_bootstrap_docs_gen",
+        ":nix_rules_docs_gen",
     ],
 )
