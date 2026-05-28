@@ -100,18 +100,18 @@ a local /nix/store.
         ),
         "_nix_wrapper": attr.label(
             doc = "Internal Nix wrapper script.",
-            default = "@nix_bootstrap//:nix_wrapper.sh",
+            default = Label("@nix_bootstrap//:nix_wrapper.sh"),
             executable = True,
             allow_files = True,
             cfg = "exec",
         ),
         "_nix_binaries": attr.label(
             doc = "Internal Nix binaries from bootstrap.",
-            default = "@nix_bootstrap//:nix_binaries",
+            default = Label("@nix_bootstrap//:nix_binaries"),
         ),
         "_run_shim": attr.label(
             doc = "Internal run-shim script.",
-            default = "@nix_bootstrap//:nix_run_shim.sh",
+            default = Label("@nix_bootstrap//:nix_run_shim.sh"),
             allow_single_file = True,
         ),
     },
