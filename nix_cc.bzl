@@ -212,6 +212,15 @@ def _nix_cc_repo_impl(repository_ctx):
             executable = True,
         )
 
+    # Copy the pinned static bwrap to the repo root so each tool wrapper can
+    # exec it as "$HERE/bwrap" instead of relying on a host-provided bwrap.
+    cp_bwrap = repository_ctx.execute(
+        ["cp", str(repository_ctx.path(repository_ctx.attr._bwrap)), "bwrap"],
+    )
+    if cp_bwrap.return_code != 0:
+        fail("nix_cc: failed to copy bwrap:\n" + cp_bwrap.stderr)
+    repository_ctx.execute(["chmod", "+x", "bwrap"])
+
     repository_ctx.file("BUILD.bazel", content = _GENERATED_BUILD)
 
 nix_cc_repo = repository_rule(
@@ -233,6 +242,11 @@ the external repository, and generates a cc_toolchain definition.
         "_wrapper": attr.label(
             doc = "Template for individual tool wrappers (e.g. gcc, ld).",
             default = Label("//:nix_cc_wrapper.sh.tpl"),
+            allow_single_file = True,
+        ),
+        "_bwrap": attr.label(
+            doc = "Statically-linked bwrap binary from bootstrap.",
+            default = Label("@nix_bootstrap//:bwrap"),
             allow_single_file = True,
         ),
     },

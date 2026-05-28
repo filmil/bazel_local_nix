@@ -10,7 +10,15 @@
 set -e
 
 REPO_ROOT=$(cd "$(dirname "$0")" && pwd)
-BWRAP=$(command -v bwrap)
+# Use the pinned static bwrap materialized alongside this wrapper by
+# nix_bootstrap, not a host-provided one (hermeticity). It is staged next to
+# this script both in the bootstrap repo and in any action that lists it as an
+# input.
+BWRAP="$REPO_ROOT/bwrap"
+if [ ! -x "$BWRAP" ]; then
+    echo "nix_wrapper: bundled bwrap not found at $BWRAP" >&2
+    exit 1
+fi
 
 # The release unpacks to nix-<version>-x86_64-linux/. Discover it (and the nix
 # binaries within) version-agnostically so bumping the pinned release needs no

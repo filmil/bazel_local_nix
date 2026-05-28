@@ -6,16 +6,17 @@
 # references, so they only run when that store content is present at
 # /nix/store. This shim re-execs the real store binary under bwrap with the
 # bundle's own store bound at /nix/store, making the bundle runnable on any
-# host with bubblewrap and unprivileged user namespaces -- no /nix on the host
-# required. The same file backs every executable in the bundle; the tool name
-# is taken from $0.
+# host with unprivileged user namespaces -- no /nix and no host bwrap required.
+# The bundle ships its own statically-linked bwrap at its root (copied in by
+# nix_package), execed here as "$HERE/bwrap". The same file backs every
+# executable in the bundle; the tool name is taken from $0.
 set -e
 
 HERE="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
 PKG="$(cat "$HERE/.nix_out")"
 TOOL="$(basename "$0")"
 
-exec bwrap \
+exec "$HERE/bwrap" \
     --bind "$HERE/nix/store" /nix/store \
     --proc /proc \
     --dev /dev \

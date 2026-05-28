@@ -15,58 +15,34 @@ def _nix_package_impl(ctx):
     output_tarball = ctx.actions.declare_file(ctx.label.name + ".tar.gz")
     nix_wrapper = ctx.executable._nix_wrapper
     shim = ctx.file._run_shim
+    bwrap = ctx.file._bwrap
 
-    # Realize the installable from the binary cache, gather its runtime
-    # closure, and tar it (plus relocatable bin/ shims) into the output. The
-    # wrapper rewrites the guest /nix/store paths it prints to host locations
-    # under the persistent CACHE_BASE, so STORE_OUT/CLOSURE are readable here.
-    script = """
-set -euo pipefail
-WRAPPER="{wrapper}"
-INSTALLABLE="{installable}"
-OUT="{out}"
-SHIM="{shim}"
-
-STORE_OUT=$("$WRAPPER" build --no-link --print-out-paths "$INSTALLABLE" | tail -n 1)
-if [ -z "$STORE_OUT" ] || [ ! -e "$STORE_OUT" ]; then
-    echo "nix_package: failed to realize $INSTALLABLE (got: '$STORE_OUT')" >&2
-    exit 1
-fi
-GUEST_OUT="/nix/store/$(basename "$STORE_OUT")"
-CLOSURE=$("$WRAPPER" path-info -r "$INSTALLABLE")
-
-WORK=$(mktemp -d)
-mkdir -p "$WORK/bin" "$WORK/nix/store"
-printf '%s\\n' "$GUEST_OUT" > "$WORK/.nix_out"
-
-if [ -d "$STORE_OUT/bin" ]; then
-    for exe in "$STORE_OUT/bin/"*; do
-        [ -e "$exe" ] || continue
-        cp "$SHIM" "$WORK/bin/$(basename "$exe")"
-        chmod +x "$WORK/bin/$(basename "$exe")"
-    done
-fi
-
-for p in $CLOSURE; do
-    [ -e "$p" ] || continue
-    cp -a "$p" "$WORK/nix/store/"
-done
-chmod -R u+w "$WORK/nix/store" 2>/dev/null || true
-
-tar czf "$OUT" -C "$WORK" .
-rm -rf "$WORK"
-""".format(
-        wrapper = nix_wrapper.path,
-        installable = ctx.attr.installable,
-        out = output_tarball.path,
-        shim = shim.path,
+    # Realize the installable and tar its closure (plus relocatable bin/ shims
+    # and a bundled static bwrap) into the output. The build steps live in
+    # nix_package_build.sh.tpl -- kept as a real shell file so it stays lintable
+    # and free of escaping -- and are materialized per target by expand_template.
+    build_script = ctx.actions.declare_file(ctx.label.name + "_build.sh")
+    ctx.actions.expand_template(
+        template = ctx.file._build_tpl,
+        output = build_script,
+        is_executable = True,
+        substitutions = {
+            "%{WRAPPER}%": nix_wrapper.path,
+            "%{INSTALLABLE}%": ctx.attr.installable,
+            "%{OUT}%": output_tarball.path,
+            "%{SHIM}%": shim.path,
+            "%{BWRAP}%": bwrap.path,
+        },
     )
 
     ctx.actions.run_shell(
         outputs = [output_tarball],
-        inputs = ctx.files._nix_binaries + [shim],
+        # bwrap is both copied into the bundle and required at $REPO_ROOT/bwrap
+        # by the wrapper that runs nix; listing it as an input stages it next to
+        # the wrapper in the bootstrap repo.
+        inputs = ctx.files._nix_binaries + [shim, bwrap, build_script],
         tools = [nix_wrapper],
-        command = script,
+        command = build_script.path,
         mnemonic = "NixPackage",
         progress_message = "Building Nix package %s" % ctx.attr.installable,
         # nix build reads/writes a persistent store that survives across builds
@@ -89,8 +65,8 @@ nix_package = rule(
 
 The produced bundle contains the full runtime closure of the installable,
 with absolute /nix/store paths preserved. It also includes relocatable
-bin/ shims that allow running the bundled binaries on hosts without
-a local /nix/store.
+bin/ shims and a bundled static bwrap that allow running the bundled
+binaries on hosts without a local /nix/store or a host-provided bwrap.
 """,
     attrs = {
         "installable": attr.string(
@@ -113,6 +89,17 @@ a local /nix/store.
             default = Label("@nix_bootstrap//:nix_run_shim.sh"),
             allow_single_file = True,
         ),
+        "_bwrap": attr.label(
+            doc = "Internal statically-linked bwrap binary from bootstrap.",
+            default = Label("@nix_bootstrap//:bwrap"),
+            allow_single_file = True,
+            cfg = "exec",
+        ),
+        "_build_tpl": attr.label(
+            doc = "Template for the per-target package build script.",
+            default = Label("//:nix_package_build.sh.tpl"),
+            allow_single_file = True,
+        ),
     },
 )
 
@@ -120,15 +107,23 @@ def _nix_toolchain_impl(ctx):
     bundle = ctx.file.bundle
     out_dir = ctx.actions.declare_directory(ctx.label.name + "_extracted")
 
-    script = """
-    mkdir -p {out_dir}
-    tar -xzf {bundle} -C {out_dir}
-    """.format(bundle = bundle.path, out_dir = out_dir.path)
+    # The extract steps live in nix_extract.sh.tpl, materialized per target by
+    # expand_template (consistent with nix_package's build script).
+    extract_script = ctx.actions.declare_file(ctx.label.name + "_extract.sh")
+    ctx.actions.expand_template(
+        template = ctx.file._extract_tpl,
+        output = extract_script,
+        is_executable = True,
+        substitutions = {
+            "%{OUT_DIR}%": out_dir.path,
+            "%{BUNDLE}%": bundle.path,
+        },
+    )
 
     ctx.actions.run_shell(
-        inputs = [bundle],
+        inputs = [bundle, extract_script],
         outputs = [out_dir],
-        command = script,
+        command = extract_script.path,
         mnemonic = "ExtractNixBundle",
     )
 
@@ -146,6 +141,11 @@ Downstream rules can then invoke binaries from the extracted tree
             doc = "A nix_package output (.tar.gz) to extract.",
             mandatory = True,
             allow_single_file = [".tar.gz"],
+        ),
+        "_extract_tpl": attr.label(
+            doc = "Template for the per-target bundle extract script.",
+            default = Label("//:nix_extract.sh.tpl"),
+            allow_single_file = True,
         ),
     },
 )

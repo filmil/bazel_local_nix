@@ -45,4 +45,7 @@ binds+=(
     --setenv PATH "%{GUEST_PATH}%"
 )
 
-exec bwrap "${binds[@]}" /usr/bin/env "$TOOL" "$@"
+# Use the pinned static bwrap copied into this toolchain repo by nix_cc_repo,
+# not a host-provided one (hermeticity). It sits at the repo root next to the
+# nix/store tree.
+exec "$HERE/bwrap" "${binds[@]}" /usr/bin/env "$TOOL" "$@"
