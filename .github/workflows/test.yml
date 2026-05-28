@@ -33,7 +33,7 @@ jobs:
       - name: Test
         run: "bazel test --verbose_failures --test_output=errors //..."
       - name: Build integration (partially-installed)
-        run: "cd integration/partially-installed && bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 //..."
+        run: "cd integration/partially-installed && bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 --experimental_repository_cache_hardlinks //..."
       - name: System Diagnostics
         run: |
           bwrap --version || echo "bwrap not found"
