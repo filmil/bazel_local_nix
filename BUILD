@@ -3,6 +3,7 @@ load("@bazel_lib//lib:write_source_files.bzl", "write_source_files")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@gazelle//:def.bzl", "DEFAULT_LANGUAGES", "gazelle", "gazelle_binary")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("@stardoc//stardoc:stardoc.bzl", "stardoc")
 load(":nix_rules.bzl", "nix_package", "nix_toolchain")
 
@@ -12,6 +13,7 @@ exports_files([
     "nix_cc_wrapper.sh.tpl",
     "nix_package_build.sh.tpl",
     "nix_extract.sh.tpl",
+    "elf_bundle.bzl",
 ])
 
 # Gazelle for Starlark
@@ -41,11 +43,35 @@ stardoc(
     deps = [":nix_bootstrap"],
 )
 
+stardoc(
+    name = "elf_bundle_docs_gen",
+    out = "elf_bundle.md",
+    input = "elf_bundle.bzl",
+    deps = [":elf_bundle"],
+)
+
+stardoc(
+    name = "nix_cc_docs_gen",
+    out = "nix_cc.md",
+    input = "nix_cc.bzl",
+    deps = [":nix_cc"],
+)
+
+stardoc(
+    name = "extensions_docs_gen",
+    out = "extensions.md",
+    input = "extensions.bzl",
+    deps = [":extensions"],
+)
+
 write_source_files(
     name = "update_docs",
     files = {
         "docs/nix_rules.md": ":nix_rules_docs_gen",
         "docs/nix_bootstrap.md": ":nix_bootstrap_docs_gen",
+        "docs/elf_bundle.md": ":elf_bundle_docs_gen",
+        "docs/nix_cc.md": ":nix_cc_docs_gen",
+        "docs/extensions.md": ":extensions_docs_gen",
     },
 )
 
@@ -77,9 +103,9 @@ genrule(
     # The run-shim re-execs the bundled binary under bwrap, which needs an
     # unsandboxed local action to create a user namespace.
     tags = [
+        "local",
         "manual",
         "no-sandbox",
-        "local",
     ],
 )
 
@@ -94,23 +120,11 @@ genrule(
     outs = ["nix_version.txt"],
     cmd = "$(location @nix_bootstrap//:nix_wrapper.sh) --version > $@ 2>&1 || true",
     tags = [
-        "manual",
-        "requires-network",
-        "no-sandbox",
         "local",
+        "manual",
+        "no-sandbox",
+        "requires-network",
     ],
-)
-
-bzl_library(
-    name = "nix_bootstrap",
-    srcs = ["nix_bootstrap.bzl"],
-    visibility = ["//visibility:public"],
-)
-
-bzl_library(
-    name = "nix_rules",
-    srcs = ["nix_rules.bzl"],
-    visibility = ["//visibility:public"],
 )
 
 bzl_library(
@@ -124,8 +138,8 @@ bzl_library(
 )
 
 bzl_library(
-    name = "rules_cc_common_cc_common",
-    srcs = ["@rules_cc//cc/common:cc_common.bzl"],
+    name = "rules_cc_cc_toolchain_config_lib_bzl",
+    srcs = ["@rules_cc//cc:cc_toolchain_config_lib.bzl"],
 )
 
 bzl_library(
@@ -135,7 +149,7 @@ bzl_library(
     deps = [
         ":bazel_tools_cc_action_names",
         ":bazel_tools_cpp_cc_toolchain_config_lib",
-        ":rules_cc_common_cc_common",
+        ":rules_cc_cc_toolchain_config_lib_bzl",
     ],
 )
 
@@ -157,10 +171,26 @@ build_test(
     ],
 )
 
-load("@rules_shell//shell:sh_test.bzl", "sh_test")
-
 # A dummy test to ensure `bazel test //...` succeeds.
 sh_test(
     name = "dummy_test",
     srcs = ["dummy_test.sh"],
+)
+
+bzl_library(
+    name = "elf_bundle",
+    srcs = ["elf_bundle.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "nix_bootstrap",
+    srcs = ["nix_bootstrap.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "nix_rules",
+    srcs = ["nix_rules.bzl"],
+    visibility = ["//visibility:public"],
 )
