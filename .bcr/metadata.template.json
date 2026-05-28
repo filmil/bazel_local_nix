@@ -10,6 +10,6 @@
         "github:filmil/bazel_local_nix"
     ],
     "versions": [
-        "0.0.1"
-    ]
+    ],
+    "yanked_versions": {}
 }
