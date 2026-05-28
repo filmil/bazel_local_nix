@@ -2,11 +2,17 @@
 load("@rules_nix//:elf_bundle.bzl", "self_extracting_binary")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
-load("@rules_nix//:nix_gnat.bzl", "ada_binary")
+load("@rules_nix//:nix_gnat.bzl", "ada_binary", "ada_library")
+
+ada_library(
+    name = "greet",
+    srcs = ["greet.adb", "greet.ads"],
+)
 
 ada_binary(
     name = "hello_bin",
     srcs = ["hello.adb"],
+    deps = [":greet"],
 )
 
 # A self-extracting bundle of the hello binary.

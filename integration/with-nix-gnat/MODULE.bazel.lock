@@ -562,7 +562,7 @@
     },
     "@@rules_nix+//:extensions.bzl%nix_gnat": {
       "general": {
-        "bzlTransitiveDigest": "0qc/6oxs9gpFC1p+7mjCl96eK+ZekJuh5ALWnvTm3qQ=",
+        "bzlTransitiveDigest": "i26KjG4GuFOVCe6Z60+bSgC1YFqvydcPWsgi7QNsbwU=",
         "usagesDigest": "ykJHuuriiofTPEpxTV4AcpfzTh2ZtN/cxTpyFt2johA=",
         "recordedInputs": [
           "REPO_MAPPING:bazel_tools,rules_cc rules_cc+",
