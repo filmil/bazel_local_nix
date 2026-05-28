@@ -53,12 +53,19 @@ def _nix_bootstrap_impl(repository_ctx):
 
 nix_bootstrap = repository_rule(
     implementation = _nix_bootstrap_impl,
+    doc = """Repository rule that fetches a pinned Nix binary release.
+
+Unpacks the official Nix binary release and materializes the bwrap
+wrapper script ('nix_wrapper.sh') required by nix_package.
+""",
     attrs = {
         "_wrapper": attr.label(
+            doc = "Template for the nix_wrapper script.",
             default = "//:nix_wrapper.sh.tpl",
             allow_single_file = True,
         ),
         "_run_shim": attr.label(
+            doc = "Template for the run-shim script.",
             default = "//:nix_run_shim.sh",
             allow_single_file = True,
         ),

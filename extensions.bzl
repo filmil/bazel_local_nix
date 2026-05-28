@@ -44,5 +44,10 @@ _configure = tag_class(
 
 nix_cc = module_extension(
     implementation = _nix_cc_impl,
+    doc = """Module extension that configures a Nix-backed C/C++ toolchain.
+
+Allows configuring a compiler from nixpkgs (e.g. gcc, clang) which will
+be automatically registered as a Bazel cc_toolchain.
+""",
     tag_classes = {"configure": _configure},
 )

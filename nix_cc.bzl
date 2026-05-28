@@ -89,8 +89,10 @@ def _nix_cc_toolchain_config_impl(ctx):
 
 nix_cc_toolchain_config = rule(
     implementation = _nix_cc_toolchain_config_impl,
+    doc = "Generates a cc_toolchain_config for a Nix-backed C/C++ toolchain.",
     attrs = {
         "builtin_include_directories": attr.string_list(
+            doc = "Directories allowed for C++ builtin includes.",
             default = ["/nix/store"],
         ),
     },
@@ -214,10 +216,22 @@ def _nix_cc_repo_impl(repository_ctx):
 
 nix_cc_repo = repository_rule(
     implementation = _nix_cc_repo_impl,
+    doc = """Realizes a Nix-backed C/C++ toolchain into an external repository.
+
+Realizes the full closure of the compiler from nixpkgs, copies it into
+the external repository, and generates a cc_toolchain definition.
+""",
     attrs = {
-        "installable": attr.string(mandatory = True),
-        "_nix_wrapper": attr.label(default = "@nix_bootstrap//:nix_wrapper.sh"),
+        "installable": attr.string(
+            doc = "Nix installable providing the C/C++ compiler (e.g. 'nixpkgs#gcc').",
+            mandatory = True,
+        ),
+        "_nix_wrapper": attr.label(
+            doc = "Internal Nix wrapper script.",
+            default = "@nix_bootstrap//:nix_wrapper.sh",
+        ),
         "_wrapper": attr.label(
+            doc = "Template for individual tool wrappers (e.g. gcc, ld).",
             default = "//:nix_cc_wrapper.sh.tpl",
             allow_single_file = True,
         ),

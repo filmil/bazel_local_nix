@@ -85,21 +85,31 @@ rm -rf "$WORK"
 
 nix_package = rule(
     implementation = _nix_package_impl,
-    doc = "Builds a Nix installable into a self-contained, relocatable " +
-          "<name>.tar.gz bundle.",
+    doc = """Builds a Nix installable into a self-contained, relocatable <name>.tar.gz bundle.
+
+The produced bundle contains the full runtime closure of the installable,
+with absolute /nix/store paths preserved. It also includes relocatable
+bin/ shims that allow running the bundled binaries on hosts without
+a local /nix/store.
+""",
     attrs = {
         "installable": attr.string(
-            doc = "Nix installable to build (a pinned flake reference).",
+            doc = "Nix installable to build (a pinned flake reference, e.g. 'nixpkgs#hello').",
             default = _DEFAULT_INSTALLABLE,
         ),
         "_nix_wrapper": attr.label(
+            doc = "Internal Nix wrapper script.",
             default = "@nix_bootstrap//:nix_wrapper.sh",
             executable = True,
             allow_files = True,
             cfg = "exec",
         ),
-        "_nix_binaries": attr.label(default = "@nix_bootstrap//:nix_binaries"),
+        "_nix_binaries": attr.label(
+            doc = "Internal Nix binaries from bootstrap.",
+            default = "@nix_bootstrap//:nix_binaries",
+        ),
         "_run_shim": attr.label(
+            doc = "Internal run-shim script.",
             default = "@nix_bootstrap//:nix_run_shim.sh",
             allow_single_file = True,
         ),
@@ -126,7 +136,11 @@ def _nix_toolchain_impl(ctx):
 
 nix_toolchain = rule(
     implementation = _nix_toolchain_impl,
-    doc = "Extracts a nix_package bundle into a usable directory tree.",
+    doc = """Extracts a nix_package bundle into a usable directory tree.
+
+Downstream rules can then invoke binaries from the extracted tree
+(e.g. '<extracted_dir>/bin/hello').
+""",
     attrs = {
         "bundle": attr.label(
             doc = "A nix_package output (.tar.gz) to extract.",
