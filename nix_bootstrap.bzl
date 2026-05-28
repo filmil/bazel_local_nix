@@ -31,7 +31,12 @@ def _nix_bootstrap_impl(repository_ctx):
         sha256 = NIX_SHA256,
     )
 
-    repository_ctx.execute(["tar", "xf", "nix.tar.xz"])
+    res = repository_ctx.execute(["tar", "xf", "nix.tar.xz"])
+    if res.return_code != 0:
+        print("nix_bootstrap: tar xf failed")
+        print("stdout: " + res.stdout)
+        print("stderr: " + res.stderr)
+        fail("nix_bootstrap: tar xf failed:\n" + res.stderr)
     repository_ctx.execute(["rm", "nix.tar.xz"])
 
     # The wrapper and run-shim are maintained as real shell files (so they stay
