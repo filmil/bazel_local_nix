@@ -33,7 +33,10 @@ jobs:
       - name: Test
         run: "bazel test --verbose_failures --test_output=errors //..."
       - name: Build integration (partially-installed)
-        run: "cd integration/partially-installed && bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 --experimental_repository_cache_hardlinks //..."
+        run: |
+          set -x
+          cd integration/partially-installed
+          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 --experimental_repository_cache_hardlinks //...
       - name: System Diagnostics
         run: |
           bwrap --version || echo "bwrap not found"
@@ -47,4 +50,8 @@ jobs:
           bwrap --unshare-user --uid 0 true && echo "bwrap works" || echo "bwrap failed"
           ls -R integration
       - name: Build integration (with-nix-clang)
-        run: "cd integration/with-nix-clang && bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 --toolchain_resolution_debug=.* //..."
+        run: |
+          set -x
+          cd integration/with-nix-clang
+          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 --toolchain_resolution_debug=.* //:hello
+          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 //...

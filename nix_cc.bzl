@@ -235,11 +235,11 @@ the external repository, and generates a cc_toolchain definition.
         ),
         "_nix_wrapper": attr.label(
             doc = "Internal Nix wrapper script.",
-            default = "@nix_bootstrap//:nix_wrapper.sh",
+            default = Label("@nix_bootstrap//:nix_wrapper.sh"),
         ),
         "_wrapper": attr.label(
             doc = "Template for individual tool wrappers (e.g. gcc, ld).",
-            default = "@rules_nix//:nix_cc_wrapper.sh.tpl",
+            default = Label("//:nix_cc_wrapper.sh.tpl"),
             allow_single_file = True,
         ),
     },
