@@ -42,6 +42,7 @@ jobs:
           sysctl kernel.unprivileged_userns_clone || true
           id
           mount | grep /nix || true
+          bwrap --unshare-user --uid 0 true && echo "bwrap works" || echo "bwrap failed"
           ls -R integration
       - name: Build integration (with-nix-clang)
         run: "cd integration/with-nix-clang && bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 --toolchain_resolution_debug=.* //..."
