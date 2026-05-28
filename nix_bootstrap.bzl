@@ -67,12 +67,12 @@ wrapper script ('nix_wrapper.sh') required by nix_package.
     attrs = {
         "_wrapper": attr.label(
             doc = "Template for the nix_wrapper script.",
-            default = "//:nix_wrapper.sh.tpl",
+            default = "@rules_nix//:nix_wrapper.sh.tpl",
             allow_single_file = True,
         ),
         "_run_shim": attr.label(
             doc = "Template for the run-shim script.",
-            default = "//:nix_run_shim.sh",
+            default = "@rules_nix//:nix_run_shim.sh",
             allow_single_file = True,
         ),
     },

@@ -239,7 +239,7 @@ the external repository, and generates a cc_toolchain definition.
         ),
         "_wrapper": attr.label(
             doc = "Template for individual tool wrappers (e.g. gcc, ld).",
-            default = "//:nix_cc_wrapper.sh.tpl",
+            default = "@rules_nix//:nix_cc_wrapper.sh.tpl",
             allow_single_file = True,
         ),
     },
