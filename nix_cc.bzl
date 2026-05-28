@@ -88,7 +88,18 @@ def _nix_cc_toolchain_config_impl(ctx):
 
 nix_cc_toolchain_config = rule(
     implementation = _nix_cc_toolchain_config_impl,
-    doc = "Generates a cc_toolchain_config for a Nix-backed C/C++ toolchain.",
+    doc = """Generates a cc_toolchain_config for a Nix-backed C/C++ toolchain.
+
+Example:
+    ```starlark
+    load("@rules_nix//:nix_cc.bzl", "nix_cc_toolchain_config")
+
+    nix_cc_toolchain_config(
+        name = "nix_cc_config",
+        builtin_include_directories = ["/nix/store"],
+    )
+    ```
+""",
     attrs = {
         "builtin_include_directories": attr.string_list(
             doc = "Directories allowed for C++ builtin includes.",
@@ -228,6 +239,16 @@ nix_cc_repo = repository_rule(
 
 Realizes the full closure of the compiler from nixpkgs, copies it into
 the external repository, and generates a cc_toolchain definition.
+
+Example:
+    ```starlark
+    load("@rules_nix//:nix_cc.bzl", "nix_cc_repo")
+
+    nix_cc_repo(
+        name = "nix_cc_toolchain",
+        installable = "github:NixOS/nixpkgs/nixos-23.11#gcc",
+    )
+    ```
 """,
     attrs = {
         "installable": attr.string(

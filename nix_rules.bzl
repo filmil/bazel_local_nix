@@ -67,6 +67,16 @@ The produced bundle contains the full runtime closure of the installable,
 with absolute /nix/store paths preserved. It also includes relocatable
 bin/ shims and a bundled static bwrap that allow running the bundled
 binaries on hosts without a local /nix/store or a host-provided bwrap.
+
+Example:
+    ```starlark
+    load("@rules_nix//:nix_rules.bzl", "nix_package")
+
+    nix_package(
+        name = "hello_pkg",
+        installable = "nixpkgs#hello",
+    )
+    ```
 """,
     attrs = {
         "installable": attr.string(
@@ -135,6 +145,21 @@ nix_toolchain = rule(
 
 Downstream rules can then invoke binaries from the extracted tree
 (e.g. '<extracted_dir>/bin/hello').
+
+Example:
+    ```starlark
+    load("@rules_nix//:nix_rules.bzl", "nix_package", "nix_toolchain")
+
+    nix_package(
+        name = "hello_pkg",
+        installable = "nixpkgs#hello",
+    )
+
+    nix_toolchain(
+        name = "hello_toolchain",
+        bundle = ":hello_pkg",
+    )
+    ```
 """,
     attrs = {
         "bundle": attr.label(

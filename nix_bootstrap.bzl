@@ -90,6 +90,15 @@ bwrap (bubblewrap) binary, and materializes the bwrap wrapper script
 ('nix_wrapper.sh') required by nix_package. Bundling bwrap removes the need
 for a host-provided bwrap; the only remaining host requirement is permission
 to create unprivileged user namespaces.
+
+Example:
+    ```starlark
+    load("@rules_nix//:nix_bootstrap.bzl", "nix_bootstrap")
+
+    nix_bootstrap(
+        name = "nix_bootstrap",
+    )
+    ```
 """,
     attrs = {
         "_wrapper": attr.label(
