@@ -36,7 +36,7 @@ jobs:
         run: |
           set -x
           cd integration/partially-installed
-          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 --experimental_repository_cache_hardlinks //...
+          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stdouterr_bytes=-1 --experimental_repository_cache_hardlinks //...
       - name: System Diagnostics
         run: |
           bwrap --version || echo "bwrap not found"
@@ -53,5 +53,5 @@ jobs:
         run: |
           set -x
           cd integration/with-nix-clang
-          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 --toolchain_resolution_debug=.* //:hello
-          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stderr_bytes=-1 //...
+          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stdouterr_bytes=-1 --toolchain_resolution_debug=.* //:hello
+          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stdouterr_bytes=-1 //...
