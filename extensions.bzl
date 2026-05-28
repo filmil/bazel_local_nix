@@ -18,6 +18,7 @@ load("//:nix_cc.bzl", "nix_cc_repo")
 _DEFAULT_NIXPKGS = "github:NixOS/nixpkgs/b134951a4c9f3c995fd7be05f3243f8ecd65d798"
 
 def _nix_cc_impl(module_ctx):
+    print("DEBUG: entering _nix_cc_impl")
     for mod in module_ctx.modules:
         for cfg in mod.tags.configure:
             nix_cc_repo(
