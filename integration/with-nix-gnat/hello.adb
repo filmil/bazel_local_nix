@@ -1,6 +1,6 @@
-with Ada.Text_IO; use Ada.Text_IO;
+with Greet;
 
 procedure Hello is
 begin
-   Put_Line ("Hello world!");
+   Greet.Hello;
 end Hello;

@@ -1,7 +1,9 @@
 Added a "gnat" toolchain and an example in `//integration`.
-- Updated `nix_cc.bzl` to include `gnat`, `gnatmake`, `gnatbind`, and `gnatlink` in `_TOOLS` so they are correctly wrapped.
-- Created `//integration/with-nix-gnat` example using `gnat` attribute.
-- Created `hello.adb` Ada file and updated BUILD file with a `genrule` to compile it.
+- Implemented `nix_gnat.bzl` that correctly wraps the GNAT toolchain standalone without tying it to `nix_cc.bzl`.
+- Created an Ada `toolchain_type` in `gnat/BUILD.bazel`.
+- Added a new `nix_gnat` module extension to configure the toolchain.
+- Created an `ada_binary` rule to correctly locate and execute the compiler.
+- Created `//integration/with-nix-gnat` example using `nix_gnat` attribute.
 
 ```
 This pull request has been created by an automated coding assistant, with human supervision.
@@ -10,4 +12,7 @@ This pull request has been created by an automated coding assistant, with human 
 Prompt:
 ```
 add a new feature in a new git worktree, based in ../: add a "gnat" toolchain and example in //integration
+no the ada toolchain must be declared in MODULE.bazel, not as individual binaries
+also ensure that gnat binaries are not tied to nix_cc.bzl but stand-alone
+send pr
 ```
