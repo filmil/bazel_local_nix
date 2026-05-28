@@ -21,6 +21,12 @@ jobs:
      repository-cache: true
   - name: Checkout
     uses: actions/checkout@v4
+  - name: Allow unprivileged user namespaces
+    # Ubuntu 24.04 restricts unprivileged user namespaces, which the bundled
+    # bwrap needs (the with-nix-clang integration realizes gcc under bwrap).
+    # bwrap itself is vendored by rules_nix, so no install is required. Mirrors
+    # the Test workflow.
+    run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
   - name: "Test"
     run: "bazel test --test_output=errors //..."
   - name: "Build integration (partially-installed)"

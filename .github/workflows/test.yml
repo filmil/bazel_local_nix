@@ -22,12 +22,12 @@ jobs:
           repository-cache: true
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y bubblewrap
-          # Ubuntu 24.04 restricts unprivileged user namespaces.
-          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - name: Allow unprivileged user namespaces
+        # Ubuntu 24.04 restricts unprivileged user namespaces, which the bundled
+        # bwrap needs. bwrap itself is vendored by rules_nix (fetched as a pinned
+        # static binary during bootstrap), so no host bubblewrap install is
+        # required.
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       # The network/bwrap targets are tagged "manual" (they need unprivileged
       # user namespaces, which CI runners do not guarantee), so the wildcard
       # build/test below stays offline: it analyzes the rules, runs the docs
