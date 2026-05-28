@@ -27,8 +27,8 @@ jobs:
       # build/test below stays offline: it analyzes the rules, runs the docs
       # sync check, and the offline build_test.
       - name: Test
-        run: "bazel test //..."
+        run: "bazel test --verbose_failures //..."
       - name: Build integration (partially-installed)
-        run: "cd integration/partially-installed && bazel build //..."
+        run: "cd integration/partially-installed && bazel build --verbose_failures //..."
       - name: Build integration (with-nix-clang)
-        run: "cd integration/with-nix-clang && bazel build //..."
+        run: "cd integration/with-nix-clang && bazel build --verbose_failures //..."
