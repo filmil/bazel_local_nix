@@ -6,7 +6,10 @@ Bazel rules that make Nix packages available inside a Bazel workspace
 **without a host-level Nix installation and without `nix-portable`**. They
 bootstrap an ephemeral Nix from the official binary release, run it
 unprivileged inside a `bwrap` (bubblewrap) user namespace against a persistent
-store, and expose the results as ordinary Bazel artifacts.
+store, and expose the results as ordinary Bazel artifacts. The `bwrap` binary
+itself is fetched as a pinned, statically-linked release during bootstrap, so
+**no host-provided `bwrap` is required** — only permission to create
+unprivileged user namespaces.
 
 > **Note on history.** Earlier versions of this repository shimmed *all* of
 > Bazel through a `nix-portable` `nix-shell` via an injected `tools/bazel`
@@ -16,8 +19,9 @@ store, and expose the results as ordinary Bazel artifacts.
 ## Requirements
 
 - Linux `x86_64`.
-- `bwrap` (bubblewrap) on `PATH` and permission to create **unprivileged user
-  namespaces**.
+- Permission to create **unprivileged user namespaces** (`bwrap` itself is
+  bundled — fetched as a pinned static binary during bootstrap — so it does not
+  need to be installed on the host).
 - `bash`, `tar`, `xz`, `cp`, `flock`, and coreutils.
 - Network egress to `https://releases.nixos.org` (bootstrap) and
   `https://cache.nixos.org` (substitutes).
@@ -102,8 +106,10 @@ The produced binaries link against `/nix/store`, so they run on a host with no
 ## How it works
 
 - **`nix_bootstrap`** (repository rule) downloads a pinned, checksummed Nix
-  release, unpacks it, and materializes the runtime wrapper `nix_wrapper.sh`
-  and the relocatable run-shim from `nix_wrapper.sh.tpl` / `nix_run_shim.sh`.
+  release plus a pinned, statically-linked `bwrap` binary, unpacks them, and
+  materializes the runtime wrapper `nix_wrapper.sh` and the relocatable run-shim
+  from `nix_wrapper.sh.tpl` / `nix_run_shim.sh`. Every wrapper and shim execs
+  the bundled `bwrap`, never a host one.
 - **`nix_wrapper.sh`** runs an arbitrary `nix` subcommand inside `bwrap`
   against a persistent, single-user store under
   `<output_user_root>/rules_nix_store` (override with `RULES_NIX_CACHE`). The

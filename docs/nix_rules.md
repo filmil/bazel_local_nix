@@ -16,8 +16,8 @@ Builds a Nix installable into a self-contained, relocatable <name>.tar.gz bundle
 
 The produced bundle contains the full runtime closure of the installable,
 with absolute /nix/store paths preserved. It also includes relocatable
-bin/ shims that allow running the bundled binaries on hosts without
-a local /nix/store.
+bin/ shims and a bundled static bwrap that allow running the bundled
+binaries on hosts without a local /nix/store or a host-provided bwrap.
 
 **ATTRIBUTES**
 

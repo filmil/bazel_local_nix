@@ -10,6 +10,8 @@ exports_files([
     "nix_wrapper.sh.tpl",
     "nix_run_shim.sh",
     "nix_cc_wrapper.sh.tpl",
+    "nix_package_build.sh.tpl",
+    "nix_extract.sh.tpl",
 ])
 
 # Gazelle for Starlark
@@ -86,6 +88,8 @@ genrule(
     srcs = [
         "@nix_bootstrap//:nix_binaries",
         "@nix_bootstrap//:nix_wrapper.sh",
+        # The wrapper execs the bundled static bwrap from its own dir.
+        "@nix_bootstrap//:bwrap",
     ],
     outs = ["nix_version.txt"],
     cmd = "$(location @nix_bootstrap//:nix_wrapper.sh) --version > $@ 2>&1 || true",
