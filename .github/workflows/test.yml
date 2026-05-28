@@ -35,25 +35,6 @@ jobs:
       - name: Test
         run: "bazel test --verbose_failures --test_output=errors //..."
       - name: Build integration (partially-installed)
-        run: |
-          set -x
-          cd integration/partially-installed
-          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stdouterr_bytes=-1 --experimental_repository_cache_hardlinks //...
-      - name: System Diagnostics
-        run: |
-          bwrap --version || echo "bwrap not found"
-          ls -l /usr/bin/bwrap || echo "/usr/bin/bwrap not found"
-          cat /proc/sys/kernel/unprivileged_userns_clone || echo "unprivileged_userns_clone not found"
-          sysctl kernel.unprivileged_userns_clone || true
-          id
-          env
-          df -h
-          mount | grep /nix || true
-          bwrap --unshare-user --uid 0 true && echo "bwrap works" || echo "bwrap failed"
-          ls -R integration
+        run: "cd integration/partially-installed && bazel build --verbose_failures //..."
       - name: Build integration (with-nix-clang)
-        run: |
-          set -x
-          cd integration/with-nix-clang
-          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stdouterr_bytes=-1 --toolchain_resolution_debug=.* //:hello
-          bazel build --verbose_failures --ui_event_filters=info,debug,error,warning --experimental_ui_max_stdouterr_bytes=-1 //...
+        run: "cd integration/with-nix-clang && bazel build --verbose_failures //..."

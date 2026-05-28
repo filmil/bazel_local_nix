@@ -22,7 +22,6 @@ filegroup(
 """
 
 def _nix_bootstrap_impl(repository_ctx):
-    print("DEBUG: entering _nix_bootstrap_impl")
     nix_url = "https://releases.nixos.org/nix/nix-{v}/nix-{v}-x86_64-linux.tar.xz".format(
         v = NIX_VERSION,
     )
@@ -34,9 +33,6 @@ def _nix_bootstrap_impl(repository_ctx):
 
     res = repository_ctx.execute(["tar", "xf", "nix.tar.xz"])
     if res.return_code != 0:
-        print("nix_bootstrap: tar xf failed")
-        print("stdout: " + res.stdout)
-        print("stderr: " + res.stderr)
         fail("nix_bootstrap: tar xf failed:\n" + res.stderr)
     repository_ctx.execute(["rm", "nix.tar.xz"])
 
