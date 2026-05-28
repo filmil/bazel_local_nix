@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
-# rules_nix (bazel_local_nix) [![Test status](https://github.com/filmil/bazel_local_nix/workflows/Test/badge.svg)](https://github.com/filmil/bazel_local_nix/actions/workflows/test.yml)
+# rules_nix (bazel_local_nix) [![Test status](https://github.com/filmil/bazel_local_nix/actions/workflows/test.yml/badge.svg)](https://github.com/filmil/bazel_local_nix/actions/workflows/test.yml) [![Publish status](https://github.com/filmil/bazel_local_nix/actions/workflows/publish.yml/badge.svg)](https://github.com/filmil/bazel_local_nix/actions/workflows/publish.yml) [![Publish BCR status](https://github.com/filmil/bazel_local_nix/actions/workflows/publish-bcr.yml/badge.svg)](https://github.com/filmil/bazel_local_nix/actions/workflows/publish-bcr.yml) [![Tag and Release status](https://github.com/filmil/bazel_local_nix/actions/workflows/tag-and-release.yml/badge.svg)](https://github.com/filmil/bazel_local_nix/actions/workflows/tag-and-release.yml)
 
 Bazel rules that make Nix packages available inside a Bazel workspace
 **without a host-level Nix installation and without `nix-portable`**. They
