@@ -13,6 +13,7 @@
 #     register_toolchains("@nix_cc_toolchain//:toolchain")
 
 load("//:nix_cc.bzl", "nix_cc_repo")
+load("//:nix_gnat.bzl", "nix_gnat_repo")
 
 # Keep in sync with nix_rules.bzl's pinned default (reproducibility, LIM-2).
 _DEFAULT_NIXPKGS = "github:NixOS/nixpkgs/b134951a4c9f3c995fd7be05f3243f8ecd65d798"
@@ -50,4 +51,35 @@ Allows configuring a compiler from nixpkgs (e.g. gcc, clang) which will
 be automatically registered as a Bazel cc_toolchain.
 """,
     tag_classes = {"configure": _configure},
+)
+
+def _nix_gnat_impl(module_ctx):
+    for mod in module_ctx.modules:
+        for cfg in mod.tags.configure:
+            nix_gnat_repo(
+                name = cfg.name,
+                installable = "{}#{}".format(cfg.nixpkgs, cfg.attribute),
+            )
+
+_gnat_configure = tag_class(
+    attrs = {
+        "name": attr.string(
+            default = "nix_gnat_toolchain",
+            doc = "Name of the generated toolchain repository.",
+        ),
+        "attribute": attr.string(
+            default = "gnat",
+            doc = "nixpkgs attribute providing the GNAT compiler.",
+        ),
+        "nixpkgs": attr.string(
+            default = _DEFAULT_NIXPKGS,
+            doc = "Pinned nixpkgs flake reference (without the #attribute).",
+        ),
+    },
+)
+
+nix_gnat = module_extension(
+    implementation = _nix_gnat_impl,
+    doc = """Module extension that configures a Nix-backed GNAT toolchain.""",
+    tag_classes = {"configure": _gnat_configure},
 )

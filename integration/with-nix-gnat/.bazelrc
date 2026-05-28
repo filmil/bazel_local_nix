@@ -1,0 +1,8 @@
+common --registry=https://raw.githubusercontent.com/filmil/bazel-registry/main
+common --registry=https://bcr.bazel.build
+build --announce_rc
+test --test_output=errors
+# The Nix-backed cc tools run under bwrap (a user namespace), which cannot be
+# nested inside Bazel's own sandbox; run cc actions with the local strategy.
+build --spawn_strategy=local
+try-import %workspace%/user.bazelrc
