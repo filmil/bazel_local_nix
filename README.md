@@ -78,6 +78,10 @@ genrule(
 See the generated rule reference for details:
 - [`nix_rules.md`](nix_rules.md) — primary build rules (`nix_package`, `nix_toolchain`).
 - [`nix_bootstrap.md`](nix_bootstrap.md) — repository bootstrap rule.
+- [`nix_cc.md`](nix_cc.md) — C/C++ toolchain rules and configuration.
+- [`nix_gnat.md`](nix_gnat.md) — Ada (GNAT) toolchain rules and configuration.
+- [`elf_bundle.md`](elf_bundle.md) — creating self-extracting bundles.
+- [`extensions.md`](extensions.md) — bzlmod extensions for toolchain configuration.
 
 ### Nix-backed C/C++ toolchain
 
