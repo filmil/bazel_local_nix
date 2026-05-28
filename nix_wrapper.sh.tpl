@@ -95,6 +95,7 @@ done
 BWRAP_BASE=(
     "$BWRAP"
     --tmpfs /
+    --bind "$(pwd)" /workspace
     --ro-bind /usr /usr
     --ro-bind-try /bin /bin
     --ro-bind-try /lib /lib
@@ -118,6 +119,8 @@ BWRAP_BASE=(
     --bind "$RUN_TMP/tmp" /tmp
     --setenv HOME /home
     --setenv TMPDIR /tmp
+    --setenv PWD /workspace
+    --chdir /workspace
     --share-net
     --die-with-parent
 )
@@ -153,9 +156,28 @@ trap cleanup EXIT INT TERM
 # --option substitute false) so builds download from cache.nixos.org rather
 # than building from source. (FR-WRAP-8, FR-WRAP-10)
 set +e
-nix_output=$("${BWRAP_BASE[@]}" "$GUEST_NIX_BIN/nix" "$@")
+if [ "$1" = "exec" ]; then
+    shift
+    # Map absolute host paths pointing into the workspace to /workspace paths.
+    ARGS=()
+    HOST_PWD=$(pwd)
+    for arg in "$@"; do
+        if [[ "$arg" == "$HOST_PWD"* ]]; then
+             ARGS+=("/workspace${arg#$HOST_PWD}")
+        else
+             ARGS+=("$arg")
+        fi
+    done
+    nix_output=$("${BWRAP_BASE[@]}" "${ARGS[@]}")
+else
+    nix_output=$("${BWRAP_BASE[@]}" "$GUEST_NIX_BIN/nix" "$@")
+fi
 nix_rc=$?
 set -e
+
+
+
+
 
 # nix runs against the persistent store bound at /nix/store (host:
 # $CACHE_BASE/nix/store). Commands like `nix build --print-out-paths` and
