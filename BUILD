@@ -64,6 +64,13 @@ stardoc(
     deps = [":extensions"],
 )
 
+stardoc(
+    name = "nix_gnat_docs_gen",
+    out = "nix_gnat.md",
+    input = "nix_gnat.bzl",
+    deps = [":nix_gnat"],
+)
+
 write_source_files(
     name = "update_docs",
     files = {
@@ -72,6 +79,7 @@ write_source_files(
         "docs/elf_bundle.md": ":elf_bundle_docs_gen",
         "docs/nix_cc.md": ":nix_cc_docs_gen",
         "docs/extensions.md": ":extensions_docs_gen",
+        "docs/nix_gnat.md": ":nix_gnat_docs_gen",
     },
 )
 
@@ -157,7 +165,10 @@ bzl_library(
     name = "extensions",
     srcs = ["extensions.bzl"],
     visibility = ["//visibility:public"],
-    deps = [":nix_cc"],
+    deps = [
+        ":nix_cc",
+        ":nix_gnat",
+    ],
 )
 
 # Offline smoke test: the rules and docs analyze without touching the network.
@@ -168,6 +179,7 @@ build_test(
         ":nix_rules",
         ":nix_bootstrap_docs_gen",
         ":nix_rules_docs_gen",
+        ":nix_gnat_docs_gen",
     ],
 )
 
@@ -192,5 +204,11 @@ bzl_library(
 bzl_library(
     name = "nix_rules",
     srcs = ["nix_rules.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "nix_gnat",
+    srcs = ["nix_gnat.bzl"],
     visibility = ["//visibility:public"],
 )
