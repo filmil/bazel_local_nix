@@ -21,6 +21,12 @@ jobs:
      repository-cache: true
   - name: Checkout
     uses: actions/checkout@v4
+  - name: Install dependencies
+    run: |
+      sudo apt-get update
+      sudo apt-get install -y bubblewrap
+      # Ubuntu 24.04 restricts unprivileged user namespaces.
+      sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
   - name: "Test"
     run: "bazel test --test_output=errors //..."
   - name: "Build integration (partially-installed)"
