@@ -151,6 +151,7 @@ def _find_store_bin(repository_ctx, pattern):
     return None
 
 def _nix_cc_repo_impl(repository_ctx):
+    print("DEBUG: entering _nix_cc_repo_impl for " + repository_ctx.name)
     wrapper = repository_ctx.path(repository_ctx.attr._nix_wrapper)
     installable = repository_ctx.attr.installable
 

@@ -12,6 +12,7 @@ _DEFAULT_NIXPKGS = "github:NixOS/nixpkgs/b134951a4c9f3c995fd7be05f3243f8ecd65d79
 _DEFAULT_INSTALLABLE = _DEFAULT_NIXPKGS + "#hello"
 
 def _nix_package_impl(ctx):
+    print("DEBUG: entering _nix_package_impl for " + ctx.label.name)
     output_tarball = ctx.actions.declare_file(ctx.label.name + ".tar.gz")
     nix_wrapper = ctx.executable._nix_wrapper
     shim = ctx.file._run_shim
