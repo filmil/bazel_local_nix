@@ -562,7 +562,7 @@
     },
     "@@rules_nix+//:extensions.bzl%nix_cc": {
       "general": {
-        "bzlTransitiveDigest": "4k7a/dYNyaEHy6uEvJ664gAkg/dlZDsRzirRNB8TIRo=",
+        "bzlTransitiveDigest": "e0Bmtt6oGPrM2skS1RUC0rFyExxOGhAE5U7492Va/uE=",
         "usagesDigest": "h8zFony4cxrJ9o/39Ej2I8klQzt9d9E/UsDtJBSjlnA=",
         "recordedInputs": [
           "REPO_MAPPING:bazel_tools,rules_cc rules_cc+",
@@ -571,6 +571,7 @@
           "REPO_MAPPING:rules_cc+,platforms platforms",
           "REPO_MAPPING:rules_cc++compatibility_proxy+cc_compatibility_proxy,rules_cc rules_cc+",
           "REPO_MAPPING:rules_nix+,bazel_tools bazel_tools",
+          "REPO_MAPPING:rules_nix+,nix_bootstrap rules_nix++nix_bootstrap+nix_bootstrap",
           "REPO_MAPPING:rules_nix+,rules_cc rules_cc+"
         ],
         "generatedRepoSpecs": {
