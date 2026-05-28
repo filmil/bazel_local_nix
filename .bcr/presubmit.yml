@@ -1,14 +1,12 @@
-matrix:
-  platform:
-    - ubuntu2004
-    - macos
-    - windows
-
-tasks:
-  verify_targets:
-    name: "Verify targets"
-    platform: ${{ platform }}
-    build_targets:
-      - "//..."
-    test_targets:
-      - "//..."
+bcr_test_module:
+  module_path: "integration/with-nix-clang"
+  matrix:
+    platform: ["ubuntu2204"]
+    bazel: [8.x]
+  tasks:
+    run_tests:
+      name: "Run test module"
+      platform: ${{ platform }}
+      bazel: ${{ bazel }}
+      test_targets:
+        - "//..."
