@@ -11,6 +11,7 @@ local_path_override(
 
 bazel_dep(name = "rules_cc", version = "0.2.18")
 bazel_dep(name = "rules_shell", version = "0.8.0")
+bazel_dep(name = "rules_android", version = "0.7.2")
 
 nix_bootstrap = use_repo_rule("@rules_nix//:nix_bootstrap.bzl", "nix_bootstrap")
 
