@@ -76,8 +76,8 @@ genrule(
 ```
 
 See the generated rule reference for details:
-- [`docs/nix_rules.md`](docs/nix_rules.md) — primary build rules (`nix_package`, `nix_toolchain`).
-- [`docs/nix_bootstrap.md`](docs/nix_bootstrap.md) — repository bootstrap rule.
+- [`nix_rules.md`](nix_rules.md) — primary build rules (`nix_package`, `nix_toolchain`).
+- [`nix_bootstrap.md`](nix_bootstrap.md) — repository bootstrap rule.
 
 ### Nix-backed C/C++ toolchain
 

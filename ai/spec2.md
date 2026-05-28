@@ -181,7 +181,7 @@ The wrapper runs an arbitrary `nix` subcommand (`"$@"`) inside `bwrap`.
 - **FR-DOC-1** Stardoc SHALL generate API reference for `nix_rules.bzl`
   (rules `nix_package`, `nix_toolchain`).
 - **FR-DOC-2** A `write_source_files` target (`update_docs`) SHALL keep
-  `docs/nix_rules.md` in sync with the generated output, and SHALL be
+  `nix_rules.md` in sync with the generated output, and SHALL be
   verifiable in CI.
 - **FR-DOC-3** A Gazelle binary configured for Starlark SHALL be available to
   maintain `BUILD` files.
@@ -298,6 +298,6 @@ Identical to the Guix variant; reproduced here for completeness.
 | Runtime wrapper | `nix_wrapper.sh.tpl`                                 |
 | Build rules     | `nix_rules.bzl`                                      |
 | Examples        | `BUILD`, `integration/BUILD`                         |
-| Documentation   | `docs/nix_rules.md` (generated), `README.md`         |
+| Documentation   | `nix_rules.md` (generated), `README.md`              |
 | Module/config   | `MODULE.bazel`, `.bazelrc`, `.bazelversion`, `go.mod`|
 | CI / release    | `.github/workflows/*.yml`, `.bcr/*`                  |

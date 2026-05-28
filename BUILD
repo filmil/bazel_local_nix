@@ -31,42 +31,42 @@ gazelle_binary(
 
 stardoc(
     name = "nix_rules_docs_gen",
-    out = "nix_rules.md",
+    out = "nix_rules.out.md",
     input = "nix_rules.bzl",
     deps = [":nix_rules"],
 )
 
 stardoc(
     name = "nix_bootstrap_docs_gen",
-    out = "nix_bootstrap.md",
+    out = "nix_bootstrap.out.md",
     input = "nix_bootstrap.bzl",
     deps = [":nix_bootstrap"],
 )
 
 stardoc(
     name = "elf_bundle_docs_gen",
-    out = "elf_bundle.md",
+    out = "elf_bundle.out.md",
     input = "elf_bundle.bzl",
     deps = [":elf_bundle"],
 )
 
 stardoc(
     name = "nix_cc_docs_gen",
-    out = "nix_cc.md",
+    out = "nix_cc.out.md",
     input = "nix_cc.bzl",
     deps = [":nix_cc"],
 )
 
 stardoc(
     name = "extensions_docs_gen",
-    out = "extensions.md",
+    out = "extensions.out.md",
     input = "extensions.bzl",
     deps = [":extensions"],
 )
 
 stardoc(
     name = "nix_gnat_docs_gen",
-    out = "nix_gnat.md",
+    out = "nix_gnat.out.md",
     input = "nix_gnat.bzl",
     deps = [":nix_gnat"],
 )
@@ -74,12 +74,12 @@ stardoc(
 write_source_files(
     name = "update_docs",
     files = {
-        "docs/nix_rules.md": ":nix_rules_docs_gen",
-        "docs/nix_bootstrap.md": ":nix_bootstrap_docs_gen",
-        "docs/elf_bundle.md": ":elf_bundle_docs_gen",
-        "docs/nix_cc.md": ":nix_cc_docs_gen",
-        "docs/extensions.md": ":extensions_docs_gen",
-        "docs/nix_gnat.md": ":nix_gnat_docs_gen",
+        "nix_rules.md": ":nix_rules_docs_gen",
+        "nix_bootstrap.md": ":nix_bootstrap_docs_gen",
+        "elf_bundle.md": ":elf_bundle_docs_gen",
+        "nix_cc.md": ":nix_cc_docs_gen",
+        "extensions.md": ":extensions_docs_gen",
+        "nix_gnat.md": ":nix_gnat_docs_gen",
     },
 )
 
