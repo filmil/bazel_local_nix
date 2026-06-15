@@ -7,14 +7,14 @@ nix_bootstrap = use_repo_rule("//:nix_bootstrap.bzl", "nix_bootstrap")
 
 nix_bootstrap(name = "nix_bootstrap")
 
-bazel_dep(name = "rules_go", version = "0.60.0")
-bazel_dep(name = "gazelle", version = "0.51.0")
+bazel_dep(name = "rules_go", version = "0.61.1")
+bazel_dep(name = "gazelle", version = "0.51.3")
 bazel_dep(name = "bazel_lib", version = "3.3.1")
-bazel_dep(name = "rules_cc", version = "0.2.18")
+bazel_dep(name = "rules_cc", version = "0.2.19")
 bazel_dep(name = "platforms", version = "1.1.0")
-bazel_dep(name = "protobuf", version = "34.1")
+bazel_dep(name = "protobuf", version = "35.1")
 bazel_dep(name = "rules_shell", version = "0.8.0")
-bazel_dep(name = "rules_android", version = "0.7.2")
+bazel_dep(name = "rules_android", version = "0.7.3")
 
 bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.9.0", dev_dependency = True)
 
