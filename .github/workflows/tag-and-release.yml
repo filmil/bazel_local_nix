@@ -73,19 +73,29 @@ jobs:
     with:
      github_token: ${{ secrets.GITHUB_TOKEN }}
      release_branches: main
+     # Without this the action bumps the patch version on every run, even
+     # when no commit landed since the last tag. The cron then released the
+     # same tree again and again. `false` makes the action emit an empty
+     # `new_tag` when no commit asks for a release, and the guards below
+     # then skip the release and the publication.
+     default_bump: false
   - name: Create a GitHub release
+    if: ${{ steps.tag_version.outputs.new_tag != '' }}
     uses: ncipollo/release-action@v1
     with:
      tag: ${{ steps.tag_version.outputs.new_tag }}
      generateReleaseNotes: true
   - name: Get release tag
+    if: ${{ steps.tag_version.outputs.new_tag != '' }}
     id: get_version
     run: echo "VERSION=${{ steps.tag_version.outputs.new_tag }}" >> $GITHUB_ENV
   - name: Get repo name
+    if: ${{ steps.tag_version.outputs.new_tag != '' }}
     id: get_repo_name
     run: echo "REPO_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
 
   - name: "Prepare source archive release artifact"
+    if: ${{ steps.tag_version.outputs.new_tag != '' }}
     uses: thedoctor0/zip-release@0.7.5
     with:
      type: 'zip'
@@ -93,6 +103,7 @@ jobs:
      exclusions: '*.git* /*node_modules/* .editorconfig /bazel-*'
 
   - name: "Upload source archive"
+    if: ${{ steps.tag_version.outputs.new_tag != '' }}
     uses: ncipollo/release-action@v1
     env:
      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
