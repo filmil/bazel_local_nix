@@ -8,7 +8,41 @@ on:
  workflow_dispatch:
 
 jobs:
+ # The scheduled run used to bump a version whether or not anything had
+ # landed, so the same tree was released again and again. This job asks the
+ # only question that matters -- did anything get committed since the last
+ # release? -- and every job below hangs off the answer.
+ check:
+  runs-on: ubuntu-latest
+  outputs:
+   changed: ${{ steps.changes.outputs.changed }}
+  steps:
+   - name: Checkout
+     uses: actions/checkout@v4
+     with:
+      # Full history and tags: `git describe` needs both.
+      fetch-depth: 0
+   - name: Look for commits since the last release
+     id: changes
+     run: |
+      set -o errexit -o nounset -o pipefail
+      latest="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+      if [ -z "${latest}" ]; then
+       echo "No tag yet; releasing."
+       echo "changed=true" >> "${GITHUB_OUTPUT}"
+       exit 0
+      fi
+      if [ "$(git rev-list -n 1 "${latest}")" = "$(git rev-parse HEAD)" ]; then
+       echo "HEAD is already released as ${latest}. Nothing to release."
+       echo "changed=false" >> "${GITHUB_OUTPUT}"
+      else
+       echo "$(git rev-list --count "${latest}"..HEAD) commit(s) since ${latest}; releasing."
+       echo "changed=true" >> "${GITHUB_OUTPUT}"
+      fi
+
  tag:
+  needs: check
+  if: ${{ needs.check.outputs.changed == 'true' }}
   runs-on: ubuntu-latest
   outputs:
    tag_name: ${{ steps.tag_version.outputs.new_tag }}
@@ -69,6 +103,7 @@ jobs:
 
  publish-my-registry:
   needs: tag
+  if: ${{ needs.tag.outputs.tag_name != '' }}
   uses: ./.github/workflows/publish.yml
   with:
    tag_name: ${{ needs.tag.outputs.tag_name }}
