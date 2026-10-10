@@ -4,16 +4,20 @@ load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@gazelle//:def.bzl", "DEFAULT_LANGUAGES", "gazelle", "gazelle_binary")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
-load("@stardoc//stardoc:stardoc.bzl", "stardoc")
 load(":nix_rules.bzl", "nix_package", "nix_toolchain")
 
 exports_files([
+    "elf_bundle.bzl",
+    "extensions.bzl",
+    "nix_bootstrap.bzl",
+    "nix_cc.bzl",
+    "nix_gnat.bzl",
+    "nix_rules.bzl",
     "nix_wrapper.sh.tpl",
     "nix_run_shim.sh",
     "nix_cc_wrapper.sh.tpl",
     "nix_package_build.sh.tpl",
     "nix_extract.sh.tpl",
-    "elf_bundle.bzl",
 ])
 
 # Gazelle for Starlark
@@ -29,57 +33,15 @@ gazelle_binary(
     ],
 )
 
-stardoc(
-    name = "nix_rules_docs_gen",
-    out = "nix_rules.out.md",
-    input = "nix_rules.bzl",
-    deps = [":nix_rules"],
-)
-
-stardoc(
-    name = "nix_bootstrap_docs_gen",
-    out = "nix_bootstrap.out.md",
-    input = "nix_bootstrap.bzl",
-    deps = [":nix_bootstrap"],
-)
-
-stardoc(
-    name = "elf_bundle_docs_gen",
-    out = "elf_bundle.out.md",
-    input = "elf_bundle.bzl",
-    deps = [":elf_bundle"],
-)
-
-stardoc(
-    name = "nix_cc_docs_gen",
-    out = "nix_cc.out.md",
-    input = "nix_cc.bzl",
-    deps = [":nix_cc"],
-)
-
-stardoc(
-    name = "extensions_docs_gen",
-    out = "extensions.out.md",
-    input = "extensions.bzl",
-    deps = [":extensions"],
-)
-
-stardoc(
-    name = "nix_gnat_docs_gen",
-    out = "nix_gnat.out.md",
-    input = "nix_gnat.bzl",
-    deps = [":nix_gnat"],
-)
-
 write_source_files(
     name = "update_docs",
     files = {
-        "nix_rules.md": ":nix_rules_docs_gen",
-        "nix_bootstrap.md": ":nix_bootstrap_docs_gen",
-        "elf_bundle.md": ":elf_bundle_docs_gen",
-        "nix_cc.md": ":nix_cc_docs_gen",
-        "extensions.md": ":extensions_docs_gen",
-        "nix_gnat.md": ":nix_gnat_docs_gen",
+        "nix_rules.md": "//docs:nix_rules_docs_gen",
+        "nix_bootstrap.md": "//docs:nix_bootstrap_docs_gen",
+        "elf_bundle.md": "//docs:elf_bundle_docs_gen",
+        "nix_cc.md": "//docs:nix_cc_docs_gen",
+        "extensions.md": "//docs:extensions_docs_gen",
+        "nix_gnat.md": "//docs:nix_gnat_docs_gen",
     },
 )
 
@@ -177,9 +139,9 @@ build_test(
     targets = [
         ":nix_bootstrap",
         ":nix_rules",
-        ":nix_bootstrap_docs_gen",
-        ":nix_rules_docs_gen",
-        ":nix_gnat_docs_gen",
+        "//docs:nix_bootstrap_docs_gen",
+        "//docs:nix_rules_docs_gen",
+        "//docs:nix_gnat_docs_gen",
     ],
 )
 
