@@ -146,6 +146,12 @@ nix_toolchain = rule(
 Downstream rules can then invoke binaries from the extracted tree
 (e.g. '<extracted_dir>/bin/hello').
 
+Absolute inter-store-path symlinks in the extracted closure (e.g. a
+util-linux sbin entry pointing at /nix/store/<other-output>/bin/...) are
+rewritten to relative links, so the extracted tree passes Bazel's tree
+artifact validation while resolving identically at runtime (the run-shim
+binds the tree's nix/store at /nix/store).
+
 Example:
     ```starlark
     load("@rules_nix//:nix_rules.bzl", "nix_package", "nix_toolchain")
