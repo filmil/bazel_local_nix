@@ -132,6 +132,11 @@ The produced binaries link against `/nix/store`, so they run on a host with no
   `<name>.tar.gz`. The action runs `local` + `no-sandbox` + `requires-network`
   because it shares the persistent store and needs substitutes.
 - **`nix_toolchain`** extracts a bundle into `<name>_extracted/`.
+  Absolute inter-store-path symlinks in the extracted closure are rewritten to
+  relative links so the extracted tree passes Bazel's tree artifact validation
+  (Bazel rejects tree artifacts containing dangling symlinks, and such links
+  dangle outside the bundled store); the links resolve identically at runtime,
+  where the run-shim binds the tree's `nix/store` at `/nix/store`.
 
 ## Reproducibility
 
