@@ -44,6 +44,10 @@ def _nix_package_impl(ctx):
         tools = [nix_wrapper],
         command = build_script.path,
         mnemonic = "NixPackage",
+        # The build script shells out to tar/cp/flock and execs the nix
+        # wrapper; it needs a normal environment (on NixOS coreutils and bash
+        # are not in /bin). Same rationale as ada_binary in nix_gnat.bzl.
+        use_default_shell_env = True,
         progress_message = "Building Nix package %s" % ctx.attr.installable,
         # nix build reads/writes a persistent store that survives across builds
         # (see nix_wrapper.sh.tpl). That is inherently non-hermetic, so the
@@ -135,6 +139,7 @@ def _nix_toolchain_impl(ctx):
         outputs = [out_dir],
         command = extract_script.path,
         mnemonic = "ExtractNixBundle",
+        use_default_shell_env = True,
     )
 
     return [DefaultInfo(files = depset([out_dir]))]

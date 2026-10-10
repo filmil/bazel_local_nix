@@ -118,6 +118,7 @@ gnatmake {args} {include_args}
             inputs = depset([src], transitive = [transitive_srcs, transitive_ali_dep, transitive_obj_dep]).to_list() + gnatinfo.all_files,
             outputs = [ali, obj],
             command = cmd,
+            use_default_shell_env = True,
         )
         
     return [

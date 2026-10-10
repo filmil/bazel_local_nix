@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # SPDX-License-Identifier: Apache-2.0
 #
 # Generic relocatable run-shim copied into a nix_package bundle as bin/<tool>.

@@ -27,6 +27,15 @@ unprivileged user namespaces.
   `https://cache.nixos.org` (substitutes).
 - Bazel with bzlmod (`.bazelversion` pins the version).
 
+On NixOS (and other hosts where `bash` and coreutils are not under `/bin`),
+the runtime scripts find them via `PATH`, and Bazel's own actions need the
+same visibility. Point Bazel at them, e.g. in `user.bazelrc`:
+
+```
+build --shell_executable=bash
+build --action_env=PATH=/run/current-system/sw/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+```
+
 ## Usage
 
 To use these rules, first configure your `.bazelrc` to use the custom registry:
