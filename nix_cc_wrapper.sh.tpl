@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # SPDX-License-Identifier: Apache-2.0
 #
 # Generic Bazel cc-toolchain tool wrapper, materialized once per tool (gcc, ld,

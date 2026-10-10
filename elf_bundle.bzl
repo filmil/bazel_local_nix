@@ -171,6 +171,9 @@ rm -rf "$WORK"
         command = script,
         mnemonic = "ElfBundle",
         progress_message = "Bundling %{label} into a self-extracting archive",
+        # The script shells out to tar/cp and execs the nix wrapper; it needs
+        # a normal environment (see NixPackage in nix_rules.bzl).
+        use_default_shell_env = True,
         # Needs network for patchelf and local for nix_wrapper
         execution_requirements = {
             "requires-network": "1",

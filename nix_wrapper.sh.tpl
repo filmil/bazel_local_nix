@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # SPDX-License-Identifier: Apache-2.0
 #
 # Runtime wrapper that runs an arbitrary `nix` subcommand ("$@") inside a
@@ -84,13 +84,22 @@ export NIX_STORE_DIR="/nix/store"
 export NIX_STATE_DIR="/nix/var/nix"
 export USER="${USER:-nixbld}"
 # Make the host CA bundle discoverable to nix for TLS to the binary cache.
+# The host bundle may live behind symlinks (e.g. /etc/static -> /nix/store on
+# NixOS) whose intermediate hops are not mounted inside the sandbox, so bind
+# the resolved real file at a stable guest path and point NIX_SSL_CERT_FILE
+# there, rather than trusting the host path to resolve inside bwrap.
+GUEST_CA=/tmp/rules_nix-ca-bundle.crt
+HOST_CA=""
 for ca in /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-bundle.crt \
           /etc/pki/tls/certs/ca-bundle.crt; do
     if [ -e "$ca" ]; then
-        export NIX_SSL_CERT_FILE="$ca"
+        HOST_CA=$(readlink -f "$ca")
         break
     fi
 done
+if [ -n "$HOST_CA" ]; then
+    export NIX_SSL_CERT_FILE="$GUEST_CA"
+fi
 
 BWRAP_BASE=(
     "$BWRAP"
@@ -124,6 +133,12 @@ BWRAP_BASE=(
     --share-net
     --die-with-parent
 )
+
+# File binds cannot cover an existing dangling symlink, so the CA bundle goes
+# to the fresh per-run /tmp mount (see GUEST_CA above).
+if [ -n "$HOST_CA" ]; then
+    BWRAP_BASE+=(--ro-bind "$HOST_CA" "$GUEST_CA")
+fi
 
 # --- One-time store initialization (FR-WRAP-3) ---------------------------
 # Seed the writable store from the shipped release and register the seed paths
